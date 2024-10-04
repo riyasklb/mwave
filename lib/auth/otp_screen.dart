@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mwave/onboardvideo/video_scree.dart';
 import 'package:mwave/view/bottum_nav_bar.dart';
 import 'package:mwave/view/dashboard_screen.dart';
 
@@ -41,7 +42,7 @@ class _OtpPageState extends State<OtpPage> {
       );
         Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) =>  BottumNavBar()),
+                    MaterialPageRoute(builder: (context) =>  VideoSelectionScreen()),
                   );
 // Optionally pop the screen or navigate elsewhere
     } catch (e) {

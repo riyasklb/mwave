@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mwave/auth/login_screen.dart';
 import 'package:mwave/constants/colors.dart';
+import 'package:mwave/onboardvideo/video_scree.dart';
 import 'package:mwave/view/bottum_nav_bar.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -43,7 +44,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
           Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) =>  BottumNavBar()),
+                    MaterialPageRoute(builder: (context) =>  VideoSelectionScreen()),
                   );
 
         // Show success message
