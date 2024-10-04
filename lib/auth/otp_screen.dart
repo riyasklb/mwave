@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mwave/view/bottum_nav_bar.dart';
 import 'package:mwave/view/dashboard_screen.dart';
 
 class OtpPage extends StatefulWidget {
@@ -40,7 +41,7 @@ class _OtpPageState extends State<OtpPage> {
       );
         Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const DashboardPage()),
+                    MaterialPageRoute(builder: (context) =>  BottumNavBar()),
                   );
 // Optionally pop the screen or navigate elsewhere
     } catch (e) {

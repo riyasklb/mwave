@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mwave/auth/login_screen.dart';
+import 'package:mwave/constants/colors.dart';
+import 'package:mwave/view/bottum_nav_bar.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -41,7 +43,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
           Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                    MaterialPageRoute(builder: (context) =>  BottumNavBar()),
                   );
 
         // Show success message
@@ -64,8 +66,8 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Register'),
+      appBar: AppBar(automaticallyImplyLeading: false,
+        title:  Text('Register',style: TextStyle(color: kwhite),),
         backgroundColor: const Color(0xFF6A00D7),
       ),
       body: Padding(

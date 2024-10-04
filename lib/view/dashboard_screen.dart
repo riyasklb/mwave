@@ -1,34 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:mwave/auth/login_screen.dart';
+import 'package:mwave/view/couces_screen.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // Initialize ScreenUtil
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dashboard'),
-        backgroundColor: const Color(0xFF6A00D7),
-      ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(16.0.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
-              'Welcome to the Dashboard',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 20),
+            // Text(
+            //   'Welcome to the Learning Platform',
+            //   style: GoogleFonts.poppins(
+            //       fontSize: 24.sp,
+            //       fontWeight: FontWeight.bold,
+            //       color: Colors.white),
+            //   textAlign: TextAlign.center,
+            // ),
+            SizedBox(height: 20.h),
 
             // Dashboard Grid
             Expanded(
               child: GridView.count(
                 crossAxisCount: 2,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
+                crossAxisSpacing: 16.w,
+                mainAxisSpacing: 16.h,
                 children: [
+                  _buildDashboardCard(
+                    context,
+                    title: 'Courses',
+                    icon: Icons.school,
+                    onTap: () {
+                      Get.to(CoursesScreen());
+                      // Navigate to Courses
+                    },
+                  ),
                   _buildDashboardCard(
                     context,
                     title: 'Profile',
@@ -39,18 +54,10 @@ class DashboardPage extends StatelessWidget {
                   ),
                   _buildDashboardCard(
                     context,
-                    title: 'Settings',
-                    icon: Icons.settings,
+                    title: 'Achievements',
+                    icon: Icons.star,
                     onTap: () {
-                      // Navigate to Settings
-                    },
-                  ),
-                  _buildDashboardCard(
-                    context,
-                    title: 'Notifications',
-                    icon: Icons.notifications,
-                    onTap: () {
-                      // Navigate to Notifications
+                      // Navigate to Achievements
                     },
                   ),
                   _buildDashboardCard(
@@ -74,6 +81,7 @@ class DashboardPage extends StatelessWidget {
                     title: 'Log out',
                     icon: Icons.logout,
                     onTap: () {
+                      Get.to(LoginPage());
                       // Log out functionality
                     },
                   ),
@@ -87,28 +95,29 @@ class DashboardPage extends StatelessWidget {
   }
 
   Widget _buildDashboardCard(
-      BuildContext context, {
-        required String title,
-        required IconData icon,
-        required VoidCallback onTap,
-      }) {
+    BuildContext context, {
+    required String title,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Card(
         color: const Color(0xFF6A00D7),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
         elevation: 4,
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(16.0.w),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 48, color: Colors.white),
-              const SizedBox(height: 16),
+              Icon(icon, size: 48.sp, color: Colors.white),
+              SizedBox(height: 16.h),
               Text(
                 title,
-                style: const TextStyle(
-                  fontSize: 18,
+                style: GoogleFonts.poppins(
+                  fontSize: 18.sp,
                   color: Colors.white,
                 ),
                 textAlign: TextAlign.center,
