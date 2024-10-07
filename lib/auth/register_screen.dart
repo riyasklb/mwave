@@ -4,8 +4,6 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:mwave/auth/login_screen.dart';
 import 'package:mwave/constants/colors.dart';
-import 'package:mwave/onboardvideo/video_scree.dart';
-
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -44,7 +42,7 @@ class _RegisterPageState extends State<RegisterPage> {
           'place': _place,
         });
 
-       Get.offAll(LoginPage());
+        Get.offAll(LoginPage());
 
         // Show success message
         ScaffoldMessenger.of(context).showSnackBar(
@@ -66,8 +64,12 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(automaticallyImplyLeading: false,
-        title:  Text('Register',style: TextStyle(color: kwhite),),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Text(
+          'Register',
+          style: TextStyle(color: kwhite),
+        ),
         backgroundColor: const Color(0xFF6A00D7),
       ),
       body: Padding(
@@ -75,7 +77,8 @@ class _RegisterPageState extends State<RegisterPage> {
         child: Form(
           key: _formKey,
           child: _isLoading
-              ? const Center(child: CircularProgressIndicator()) // Show loading indicator
+              ? const Center(
+                  child: CircularProgressIndicator()) // Show loading indicator
               : ListView(
                   children: [
                     // Username field
@@ -111,7 +114,8 @@ class _RegisterPageState extends State<RegisterPage> {
 
                     // Phone number field
                     TextFormField(
-                      decoration: const InputDecoration(hintText: 'Phone Number'),
+                      decoration:
+                          const InputDecoration(hintText: 'Phone Number'),
                       keyboardType: TextInputType.phone,
                       onSaved: (value) {
                         _phone = value!;
@@ -158,7 +162,8 @@ class _RegisterPageState extends State<RegisterPage> {
                     // Register button
                     ElevatedButton(
                       onPressed: _registerUser,
-                      child: const Text('Register', style: TextStyle(fontSize: 18)),
+                      child: const Text('Register',
+                          style: TextStyle(fontSize: 18)),
                     ),
                   ],
                 ),

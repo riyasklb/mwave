@@ -76,7 +76,7 @@ class _OtpPageState extends State<OtpPage> {
               controller: otpController,
               decoration: const InputDecoration(
                 labelText: 'OTP',
-                hintText: 'Enter the 6-digit OTP',
+                hintText: '000000',
                 border: OutlineInputBorder(),
               ),
               keyboardType: TextInputType.number,
