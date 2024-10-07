@@ -3,8 +3,10 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/snackbar/snackbar.dart';
 import 'package:mwave/constants/colors.dart';
-import 'package:mwave/onboardvideo/video_scree.dart';
+
 import 'package:mwave/view/bottum_nav_bar.dart';
+
+import 'package:mwave/view/bottumbar1.dart';
 class QuizScreen extends StatefulWidget {
   final int videoNumber;
 
@@ -166,7 +168,7 @@ class _QuizScreenState extends State<QuizScreen> {
                     ),
                     onPressed: () {
                       // Navigate to Home Screen
-                      Get.offAll(BottumNavBar()); // Assuming you have a HomeScreen widget
+                     Get.offAll(BottumNavBar()); // Assuming you have a HomeScreen widget
                     },
                     child: Text('Go to Home Screen', style: TextStyle(fontSize: 18, color: kblack)),
                   ),

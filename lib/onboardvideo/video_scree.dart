@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:mwave/constants/colors.dart';
 import 'package:mwave/onboardvideo/quze.dart';
+import 'package:mwave/view/bottum_nav_bar.dart';
+import 'package:mwave/view/bottumbar1.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoSelectionScreen extends StatefulWidget {
@@ -17,9 +22,7 @@ class _VideoSelectionScreenState extends State<VideoSelectionScreen> {
   bool _isVideo3Watched = false;
 
   // State variables to control video visibility
-  bool _isVideo1Visible = true;
-  bool _isVideo2Visible = true;
-  bool _isVideo3Visible = true;
+  int _currentVideoIndex = 1; // Controls which video is shown
 
   @override
   void initState() {
@@ -65,6 +68,20 @@ class _VideoSelectionScreenState extends State<VideoSelectionScreen> {
     super.dispose();
   }
 
+  void _onQuizSubmitted(int videoNumber) {
+    setState(() {
+      // After each quiz submission, show the next video
+      if (videoNumber == 1) {
+        _currentVideoIndex = 2;
+      } else if (videoNumber == 2) {
+        _currentVideoIndex = 3;
+      } else if (videoNumber == 3) {
+        // After the third video quiz submission, navigate to home or perform another action
+        Get.to(BottumNavBar());
+      }
+    });
+  }
+
   Widget buildVideoPlayer(VideoPlayerController controller) {
     return controller.value.isInitialized
         ? AspectRatio(
@@ -74,29 +91,22 @@ class _VideoSelectionScreenState extends State<VideoSelectionScreen> {
         : Center(child: CircularProgressIndicator());
   }
 
-  void _onQuizSubmitted(int videoNumber) {
-    // Hide the video after the quiz is submitted
-    setState(() {
-      if (videoNumber == 1) {
-        _isVideo1Visible = false;
-      } else if (videoNumber == 2) {
-        _isVideo2Visible = false;
-      } else if (videoNumber == 3) {
-        _isVideo3Visible = false;
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(backgroundColor: kwhite,
       appBar: AppBar(
+        automaticallyImplyLeading: false,  backgroundColor: const Color(0xFF6A00D7), 
         title: Text(
           'Videos',
-          style: TextStyle(color: kwhite),
+          style: GoogleFonts.lato(
+      fontSize: 24.sp, // Adjust the font size as needed
+      fontWeight: FontWeight.bold, // Bold text
+      color: Colors.white, // Text color
+      letterSpacing: 1.2, // Adds a little spacing between letters
+    ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.blueAccent,
+
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -110,16 +120,18 @@ class _VideoSelectionScreenState extends State<VideoSelectionScreen> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              // Video 1
-              if (_isVideo1Visible)
+              // Display video 1 only if _currentVideoIndex is 1
+              if (_currentVideoIndex == 1)
                 _buildVideoCard(1, _controller1, _isVideo1Watched),
               SizedBox(height: 20),
-              // Video 2
-              if (_isVideo2Visible)
+
+              // Display video 2 only if _currentVideoIndex is 2
+              if (_currentVideoIndex == 2)
                 _buildVideoCard(2, _controller2, _isVideo2Watched),
               SizedBox(height: 20),
-              // Video 3
-              if (_isVideo3Visible)
+
+              // Display video 3 only if _currentVideoIndex is 3
+              if (_currentVideoIndex == 3)
                 _buildVideoCard(3, _controller3, _isVideo3Watched),
             ],
           ),
@@ -158,15 +170,8 @@ class _VideoSelectionScreenState extends State<VideoSelectionScreen> {
               SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () {
-                  // Handle quiz submission
-                  _onQuizSubmitted(videoNumber); // Hide the video
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          QuizScreen(videoNumber: videoNumber),
-                    ),
-                  );
+                  _onQuizSubmitted(videoNumber);
+                Get.to( QuizScreen(videoNumber: videoNumber),);
                 },
                 child: Text('Take Quiz for Video $videoNumber'),
                 style: ElevatedButton.styleFrom(

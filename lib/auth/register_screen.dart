@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/get_navigation.dart';
 import 'package:mwave/auth/login_screen.dart';
 import 'package:mwave/constants/colors.dart';
 import 'package:mwave/onboardvideo/video_scree.dart';
-import 'package:mwave/view/bottum_nav_bar.dart';
+
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -42,10 +44,7 @@ class _RegisterPageState extends State<RegisterPage> {
           'place': _place,
         });
 
-          Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) =>  VideoSelectionScreen()),
-                  );
+       Get.offAll(LoginPage());
 
         // Show success message
         ScaffoldMessenger.of(context).showSnackBar(
@@ -81,7 +80,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   children: [
                     // Username field
                     TextFormField(
-                      decoration: const InputDecoration(labelText: 'Username'),
+                      decoration: const InputDecoration(hintText: 'Username'),
                       onSaved: (value) {
                         _username = value!;
                       },
@@ -96,7 +95,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                     // Email field
                     TextFormField(
-                      decoration: const InputDecoration(labelText: 'Email'),
+                      decoration: const InputDecoration(hintText: 'Email'),
                       keyboardType: TextInputType.emailAddress,
                       onSaved: (value) {
                         _email = value!;
@@ -112,7 +111,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                     // Phone number field
                     TextFormField(
-                      decoration: const InputDecoration(labelText: 'Phone Number'),
+                      decoration: const InputDecoration(hintText: 'Phone Number'),
                       keyboardType: TextInputType.phone,
                       onSaved: (value) {
                         _phone = value!;
@@ -128,7 +127,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                     // Address field
                     TextFormField(
-                      decoration: const InputDecoration(labelText: 'Address'),
+                      decoration: const InputDecoration(hintText: 'Address'),
                       onSaved: (value) {
                         _address = value!;
                       },
@@ -143,7 +142,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                     // Place field
                     TextFormField(
-                      decoration: const InputDecoration(labelText: 'Place'),
+                      decoration: const InputDecoration(hintText: 'Place'),
                       onSaved: (value) {
                         _place = value!;
                       },

@@ -111,8 +111,8 @@ class _LoginPageState extends State<LoginPage> {
               TextFormField(
                 controller: phoneController,
                 decoration: InputDecoration(
-                  labelText: 'Phone Number',
-                  hintText: 'e.g. 123 456 7890',
+                //  labelText: 'Phone Number',
+                  hintText: 'e.g. 96337497xx',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12), // Rounded corners
                     borderSide: BorderSide(color: Colors.white), // Border color
