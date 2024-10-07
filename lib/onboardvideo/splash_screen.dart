@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:mwave/auth/onboard_screen.dart'; // For navigation
+import 'package:mwave/auth/onboard_screen.dart';
+import 'package:mwave/constants/colors.dart';
+import 'package:mwave/onboardvideo/video_scree.dart'; // For navigation
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -28,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     // Navigate to Home after 3 seconds
     Future.delayed(Duration(seconds: 3), () {
-      Get.to(Onboard_screen()); // Change to your actual home screen route
+      Get.to(VideoSelectionScreen()); // Change to your actual home screen route
     });
   }
 
@@ -41,7 +43,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF6A00D7), // Purple background
+      backgroundColor: kblue, // Purple background
       body: Center(
         child: FadeTransition(
           opacity: _animation,

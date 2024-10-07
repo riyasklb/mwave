@@ -1,11 +1,10 @@
-
 import 'dart:math';
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:mwave/constants/colors.dart';
 import 'package:mwave/view/home_screen.dart';
 import 'package:mwave/view/history_screeen.dart';
-import 'package:mwave/view/more_scree.dart';
+import 'package:mwave/view/menu_screen.dart';
 import 'package:mwave/view/referal_screen.dart';
 import 'package:mwave/view/wallet_screen.dart';
 
@@ -35,15 +34,12 @@ class _BottumNavBarState extends State<BottumNavBar> {
 
   @override
   Widget build(BuildContext context) {
-    /// widget list
     final List<Widget> bottomBarPages = [
-      HomeScreen(
-       
-          ),
+      HomeScreen(),
       const HistoryScreeen(),
       const ReferalScreen(),
       const WalletScreen(),
-      const MoreScreen(),
+      const MenuScreen(),
     ];
     return Scaffold(
       body: PageView(
@@ -57,7 +53,7 @@ class _BottumNavBarState extends State<BottumNavBar> {
           ? AnimatedNotchBottomBar(
               /// Provide NotchBottomBarController
               notchBottomBarController: _controller,
-              color: Colors.white,
+              color:Color(0xFF9B87D5),
               showLabel: true,
               textOverflow: TextOverflow.visible,
               maxLine: 1,
@@ -67,7 +63,11 @@ class _BottumNavBarState extends State<BottumNavBar> {
               notchShader: SweepGradient(
                 startAngle: 0,
                 endAngle: pi / 2,
-                colors: [kwhite, kwhite, kwhite],
+                colors: [
+                  kblue,
+                  kblue,
+                  kblue
+                ],
                 tileMode: TileMode.mirror,
               ).createShader(Rect.fromCircle(center: Offset.zero, radius: 8.0)),
               notchColor: Colors.black87,
@@ -81,53 +81,30 @@ class _BottumNavBarState extends State<BottumNavBar> {
               itemLabelStyle: const TextStyle(fontSize: 10),
 
               elevation: 1,
-              bottomBarItems: const [
+              bottomBarItems: [
                 BottomBarItem(
-                  inActiveItem: Icon(
-                    Icons.home_filled,
-                    color: Colors.blueGrey,
-                  ),
+                  inActiveItem: Icon(Icons.home_filled, color: kwhite),
                   activeItem: Icon(
                     Icons.home_filled,
-                    color: Color(0xFF6A00D7),
+                    color: kwhite,
                   ),
                 ),
                 BottomBarItem(
-                  inActiveItem: Icon(Icons.history, color: Colors.blueGrey),
-                  activeItem: Icon(
-                    Icons.history,
-                    color: Color(0xFF6A00D7),
-                  ),
+                  inActiveItem: Icon(Icons.history, color: kwhite),
+                  activeItem: Icon(Icons.history, color: kwhite),
                 ),
                 BottomBarItem(
-                  inActiveItem: Icon(
-                    Icons.group,
-                    color: Colors.blueGrey,
-                  ),
-                  activeItem: Icon(
-                    Icons.group,
-                    color: Color(0xFF6A00D7),
-                  ),
+                  inActiveItem: Icon(Icons.group, color: kwhite),
+                  activeItem: Icon(Icons.group, color: kwhite),
                 ),
                 BottomBarItem(
-                  inActiveItem: Icon(
-                    Icons.account_balance_wallet,
-                    color: Colors.blueGrey,
-                  ),
-                  activeItem: Icon(
-                    Icons.account_balance_wallet,
-                    color: Color(0xFF6A00D7),
-                  ),
+                  inActiveItem:
+                      Icon(Icons.account_balance_wallet, color: kwhite),
+                  activeItem: Icon(Icons.account_balance_wallet, color: kwhite),
                 ),
                 BottomBarItem(
-                  inActiveItem: Icon(
-                    Icons.more_horiz,
-                    color: Colors.blueGrey,
-                  ),
-                  activeItem: Icon(
-                    Icons.more_horiz,
-                    color: Color(0xFF6A00D7),
-                  ),
+                  inActiveItem: Icon(Icons.menu, color: kwhite),
+                  activeItem: Icon(Icons.menu, color: kwhite),
                 ),
               ],
               onTap: (index) {

@@ -70,7 +70,7 @@ class _RegisterPageState extends State<RegisterPage> {
           'Register',
           style: TextStyle(color: kwhite),
         ),
-        backgroundColor: const Color(0xFF6A00D7),
+        backgroundColor:  kblue,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

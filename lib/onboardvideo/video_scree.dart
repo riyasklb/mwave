@@ -31,7 +31,7 @@ class _VideoSelectionScreenState extends State<VideoSelectionScreen> {
 
   setDefault() async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      _showLanguageSelectionDialog();
+ 
 
       _controller1 = VideoPlayerController.asset('assets/images/viddeo1.mp4')
         ..initialize().then((_) => setState(() {}))
@@ -62,6 +62,7 @@ class _VideoSelectionScreenState extends State<VideoSelectionScreen> {
             });
           }
         });
+          _showLanguageSelectionDialog();
     });
   }
 
@@ -143,7 +144,7 @@ class _VideoSelectionScreenState extends State<VideoSelectionScreen> {
       backgroundColor: kwhite,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: const Color(0xFF6A00D7),
+        backgroundColor:  kblue,
         title: Text(
           _selectedLanguage == 'en' ? 'Videos' : 'வீடியோக்கள்',
           style: GoogleFonts.lato(

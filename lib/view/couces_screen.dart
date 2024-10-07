@@ -53,7 +53,7 @@ class CoursesScreen extends StatelessWidget {
           style: GoogleFonts.poppins(
               fontSize: 24.sp, fontWeight: FontWeight.bold, color: kwhite),
         ),
-        backgroundColor: const Color(0xFF6A00D7),
+        backgroundColor:  kblue,
         elevation: 0,
       ),
       body: Padding(

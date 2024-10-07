@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mwave/constants/colors.dart';
 import 'package:mwave/onboardvideo/video_scree.dart';
 
 
@@ -59,7 +60,7 @@ class _OtpPageState extends State<OtpPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Enter OTP',style: TextStyle(color: Colors.white),),
-        backgroundColor: const Color(0xFF6A00D7),
+        backgroundColor:  kblue,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -88,7 +89,7 @@ class _OtpPageState extends State<OtpPage> {
               child: ElevatedButton(
                 onPressed: isLoading ? null : verifyOtp,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF6A00D7),
+                  backgroundColor:  kblue,
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                   textStyle: const TextStyle(fontSize: 18),
                 ),

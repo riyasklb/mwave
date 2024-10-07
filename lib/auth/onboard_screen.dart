@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mwave/auth/login_screen.dart';
 import 'package:mwave/auth/register_screen.dart';
+import 'package:mwave/constants/colors.dart';
 
 class Onboard_screen extends StatelessWidget {
   const Onboard_screen({super.key});
@@ -11,9 +12,9 @@ class Onboard_screen extends StatelessWidget {
     return Scaffold(
       // Gradient Background
       body: Container(
-        decoration: const BoxDecoration(
+        decoration:  BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF6A00D7), Color(0xFF8E2DE2)],
+            colors: [kblue, Color(0xFF8E2DE2)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),

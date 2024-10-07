@@ -14,16 +14,17 @@ class QuizScreen extends StatefulWidget {
 }
 
 class _QuizScreenState extends State<QuizScreen> {
-  final List<int> _selectedAnswers = [-1, -1, -1, -1, -1]; // 5 questions
+  final List<int> _selectedAnswers = [0, 0, 0, 0, 0,0]; // 5 questions
   bool _isSubmitted = false;
 
   // Correct answers mapping
   final Map<int, int> _correctAnswers = {
-    1: 1, // Correct answer for Q1
-    2: 2, // Correct answer for Q2
-    3: 1, // Correct answer for Q3
-    4: 1, // Correct answer for Q4
-    5: 1, // Correct answer for Q5
+   0:1,
+    1: 1, // Correct answer for Q2
+    2: 1, // Correct answer for Q3
+    3: 0, // Correct answer for Q4
+    4: 0, // Correct answer for Q5
+    
   };
 
   // Track whether the correct answer is blinking

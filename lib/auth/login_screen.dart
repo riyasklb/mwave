@@ -18,6 +18,9 @@ class _LoginPageState extends State<LoginPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   void loginWithPhoneNumber() async {
+
+
+    
     if (_formKey.currentState?.validate() ?? false) {
       setState(() {
         isLoading = true;
@@ -81,12 +84,12 @@ class _LoginPageState extends State<LoginPage> {
           'Log in',
           style: TextStyle(color: kwhite),
         ),
-        backgroundColor: const Color(0xFF6A00D7),
+        backgroundColor:  kblue,
       ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF6A00D7), Color(0xFF8E2DE2)],
+            colors: [kblue, Color(0xFF8E2DE2)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -119,7 +122,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                    focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Color(0xFF6A00D7), width: 2), // Focused border color
+                    borderSide: BorderSide(color: kblue, width: 2), // Focused border color
                   ),
                   filled: true,
                   fillColor: Colors.white,
@@ -145,7 +148,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: ElevatedButton(
                   onPressed: isLoading ? null : loginWithPhoneNumber,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF6A00D7),
+                    backgroundColor:  kblue,
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
                     textStyle: const TextStyle(fontSize: 18),
                     shape: RoundedRectangleBorder(
