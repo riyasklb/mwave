@@ -8,6 +8,7 @@ import 'package:mwave/firebase_options.dart';
 import 'package:mwave/onboardvideo/splash_screen.dart';
 import 'package:mwave/onboardvideo/video_scree.dart';
 import 'package:mwave/view/bottumbar1.dart';
+import 'package:mwave/view/refund_and_policy.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -72,6 +73,6 @@ class MyApp extends StatelessWidget {
                 ),
               ),
             ),
-            home: SplashScreen()));
+            home: RefundPolicyScreen()));
   }
 }

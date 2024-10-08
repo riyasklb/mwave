@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mwave/constants/localisation.dart';
 import 'package:mwave/view/bottumbar1.dart';
+import 'package:mwave/view/paymet_screen.dart';
 
 class QuizScreen extends StatefulWidget {
   final int videoNumber;
@@ -91,9 +92,9 @@ class _QuizScreenState extends State<QuizScreen> {
                   child: ElevatedButton(
                     onPressed: () {
                       // Navigate to Home Screen
-                      Get.offAll(BottumNavBar()); // Assuming you have a HomeScreen widget
+                      Get.offAll(PaymentPage()); // Assuming you have a HomeScreen widget
                     },
-                    child: Text('Go to Home Screen'),
+                    child: Text('Go to Payment Screen'),
                   ),
                 ),
               ],
@@ -127,11 +128,11 @@ class _QuizScreenState extends State<QuizScreen> {
     } else if (videoNumber == 2) {
       questions = [
         {
-          'question': Localization.getString('question3', widget.language),
+          'question': Localization.getString('question5', widget.language),
           'options': [
-            Localization.getString('optionF', widget.language),
-            Localization.getString('optionG', widget.language),
-            Localization.getString('optionH', widget.language),
+            Localization.getString('optionL', widget.language),
+            Localization.getString('optionM', widget.language),
+            Localization.getString('optionN', widget.language),
           ],
         },
         {
@@ -146,11 +147,11 @@ class _QuizScreenState extends State<QuizScreen> {
     } else if (videoNumber == 3) {
       questions = [
         {
-          'question': Localization.getString('question5', widget.language),
+          'question': Localization.getString('question3', widget.language),
           'options': [
-            Localization.getString('optionL', widget.language),
-            Localization.getString('optionM', widget.language),
-            Localization.getString('optionN', widget.language),
+            Localization.getString('optionF', widget.language),
+            Localization.getString('optionG', widget.language),
+            Localization.getString('optionH', widget.language),
           ],
         },
       ];

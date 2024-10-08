@@ -53,7 +53,7 @@ class _VideoSelectionScreenState extends State<VideoSelectionScreen> {
           }
         });
 
-      _controller3 = VideoPlayerController.asset('assets/images/video3.mp4')
+      _controller3 = VideoPlayerController.asset('assets/images/video3.MP4')
         ..initialize().then((_) => setState(() {}))
         ..addListener(() {
           if (_controller3.value.position == _controller3.value.duration) {

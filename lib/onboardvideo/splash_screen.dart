@@ -30,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     // Navigate to Home after 3 seconds
     Future.delayed(Duration(seconds: 3), () {
-      Get.to(VideoSelectionScreen()); // Change to your actual home screen route
+      Get.to(Onboard_screen()); // Change to your actual home screen route
     });
   }
 

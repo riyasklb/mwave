@@ -14,7 +14,7 @@ class RefundPolicyScreen extends StatelessWidget {
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/pixelcut-export 3(1).jpeg'), // Background image
+                image: AssetImage('assets/images/pixelcut-export 3(1).jpeg',), // Background image
                 fit: BoxFit.cover, // Cover the entire screen
               ),
             ),
@@ -51,6 +51,34 @@ class RefundPolicyScreen extends StatelessWidget {
               ),
               SizedBox(height: 20.h), // Space between text and form
 
+              // Refund Policy Section
+              Padding(
+                padding: EdgeInsets.all(16.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Refund Policy for MoneyWave',
+                      style: GoogleFonts.lato(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    SizedBox(height: 10.h),
+                    Text(
+                      '• If you pay ₹100 and refer someone, you will not receive a refund in MoneyWave.\n\n'
+                      '• If you pay ₹100 and refer no one, you will receive a refund after 100 days in MoneyWave.',
+                      style: GoogleFonts.lato(
+                        fontSize: 14.sp,
+                        color: Colors.white70,
+                      ),
+                    ),
+                    SizedBox(height: 30.h),
+                  ],
+                ),
+              ),
+
               Expanded(
                 child: SingleChildScrollView(
                   padding: EdgeInsets.all(16.w),
@@ -71,30 +99,29 @@ class RefundPolicyScreen extends StatelessWidget {
                             // Add Submit logic here
                           },
                           style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(horizontal: 50.w, vertical: 15.h), backgroundColor: null,
+                            padding: EdgeInsets.symmetric(horizontal: 50.w, vertical: 15.h),
+                            backgroundColor: null,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30), // Rounded button
+                              borderRadius: BorderRadius.circular(30.r), // Rounded button
                             ),
                             elevation: 5,
-                          ), child:  Container(
-                              alignment: Alignment.center,
-                              child: Text(
-                                'Submit',
-                                style: TextStyle(
-                                  fontSize: 18.sp,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                  letterSpacing: 1.2,
-                                ),
+                          ),
+                          child: Container(
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Submit',
+                              style: TextStyle(
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                letterSpacing: 1.2,
                               ),
                             ),
                           ),
-                        
-                           
-                         
-                    
+                        ),
                       ),
-                      SizedBox(height: 29,),
+                      SizedBox(height: 29.h),
+
                       // Footer Disclaimer
                       Center(
                         child: Text(
@@ -123,7 +150,7 @@ class RefundPolicyScreen extends StatelessWidget {
       padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.9), // Slightly transparent white background
-        borderRadius: BorderRadius.circular(20), // Rounded corners
+        borderRadius: BorderRadius.circular(20.r), // Rounded corners
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
