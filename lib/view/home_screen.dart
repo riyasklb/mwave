@@ -1,10 +1,14 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mwave/auth/login_screen.dart';
+import 'package:mwave/auth/onboard_screen.dart';
+import 'package:mwave/auth/register_screen.dart';
 import 'package:mwave/constants/colors.dart';
 import 'package:mwave/view/couces_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -91,14 +95,51 @@ class HomeScreen extends StatelessWidget {
                           // Navigate to Analytics screen
                         },
                       ),
-                      _buildDashboardCard(
-                        context,
-                        title: 'Log out',
-                        icon: Icons.logout,
-                        onTap: () {
-                          Get.to(() => LoginPage());
-                        },
-                      ),
+                     _buildDashboardCard(
+  context,
+  title: 'Log out',
+  icon: Icons.logout,
+  onTap: () async {
+    // Show confirmation dialog before logout
+    bool shouldLogout = await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Logout"),
+        content: Text("Are you sure you want to log out?"),
+        actions: [
+          TextButton(
+            child: Text("Cancel"),
+            onPressed: () {
+              Navigator.of(context).pop(false); // Return false to not log out
+            },
+          ),
+          TextButton(
+            child: Text("Logout"),
+            onPressed: () {
+              Navigator.of(context).pop(true); // Return true to proceed with logout
+            },
+          ),
+        ],
+      ),
+    );
+
+    if (shouldLogout == true) {
+      // Sign out from Firebase
+      await FirebaseAuth.instance.signOut();
+
+      // Clear SharedPreferences (or any other locally stored data)
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.clear();
+
+      // Optionally clear other local data if necessary
+      // For example: clear caches, reset state, etc.
+
+      // Navigate to the onboard screen
+      Get.offAll(() => Onboard_screen());  // Get.offAll to remove the back stack completely
+    }
+  },
+),
+
                     ],
                   ),
                 ),

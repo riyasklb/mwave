@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:mwave/auth/login_screen.dart';
 import 'package:mwave/constants/colors.dart';
 
 import 'package:mwave/firebase_options.dart';
@@ -73,6 +74,6 @@ class MyApp extends StatelessWidget {
                 ),
               ),
             ),
-            home: RefundPolicyScreen()));
+            home: SplashScreen()));
   }
 }

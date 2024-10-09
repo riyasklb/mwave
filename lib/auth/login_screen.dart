@@ -18,9 +18,6 @@ class _LoginPageState extends State<LoginPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   void loginWithPhoneNumber() async {
-
-
-    
     if (_formKey.currentState?.validate() ?? false) {
       setState(() {
         isLoading = true;
@@ -37,6 +34,7 @@ class _LoginPageState extends State<LoginPage> {
             setState(() {
               isLoading = false;
             });
+            // Handle successful login if auto verification happens
           },
           verificationFailed: (FirebaseAuthException e) {
             setState(() {
@@ -54,14 +52,14 @@ class _LoginPageState extends State<LoginPage> {
               context,
               MaterialPageRoute(
                 builder: (context) => OtpPage(
-                  phoneNumber: phoneNumberWithPrefix,
+                  phoneNumber: phoneController.text,
                   verificationId: verificationId,
                 ),
               ),
             );
           },
           codeAutoRetrievalTimeout: (String verificationId) {
-            // Auto-retrieve timeout
+            // Handle auto-retrieve timeout
           },
         );
       } catch (e) {
@@ -84,12 +82,12 @@ class _LoginPageState extends State<LoginPage> {
           'Log in',
           style: TextStyle(color: kwhite),
         ),
-        backgroundColor:  kblue,
+        backgroundColor: kblue,
       ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [kblue, Color(0xFF8E2DE2)],
+            colors: [kblue, const Color(0xFF8E2DE2)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -109,20 +107,17 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               const SizedBox(height: 16),
-
-              // Updated TextFormField
               TextFormField(
                 controller: phoneController,
                 decoration: InputDecoration(
-                //  labelText: 'Phone Number',
                   hintText: 'e.g. 9633749714',
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12), // Rounded corners
-                    borderSide: BorderSide(color: Colors.white), // Border color
-                  ),
-                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: kblue, width: 2), // Focused border color
+                    borderSide: const BorderSide(color: Colors.white),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: kblue, width: 2),
                   ),
                   filled: true,
                   fillColor: Colors.white,
@@ -140,27 +135,21 @@ class _LoginPageState extends State<LoginPage> {
                   return null;
                 },
               ),
-
               const SizedBox(height: 24),
-
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: isLoading ? null : loginWithPhoneNumber,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:  kblue,
+                    backgroundColor: kblue,
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
                     textStyle: const TextStyle(fontSize: 18),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12), // Rounded corners
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                   child: isLoading
-                      ? const SizedBox(
-                          height: 18,
-                          width: 18,
-                          child: CircularProgressIndicator(color: Colors.white),
-                        )
+                      ? const CircularProgressIndicator(color: Colors.white)
                       : const Text('Login with OTP'),
                 ),
               ),

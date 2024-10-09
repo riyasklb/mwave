@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mwave/constants/localisation.dart';
-import 'package:mwave/view/bottumbar1.dart';
 import 'package:mwave/view/paymet_screen.dart';
 
 class QuizScreen extends StatefulWidget {

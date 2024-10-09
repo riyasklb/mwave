@@ -4,7 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:mwave/auth/onboard_screen.dart';
 import 'package:mwave/constants/colors.dart';
-import 'package:mwave/onboardvideo/video_scree.dart'; // For navigation
+import 'package:mwave/view/bottumbar1.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -28,10 +29,32 @@ class _SplashScreenState extends State<SplashScreen>
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
     _controller.forward();
 
-    // Navigate to Home after 3 seconds
-    Future.delayed(Duration(seconds: 3), () {
-      Get.to(Onboard_screen()); // Change to your actual home screen route
-    });
+    // Check user login status after the splash screen
+    _checkUserLoginStatus();
+  }
+
+  // Function to retrieve user id from shared preferences
+  Future<String?> _getUserIdFromPrefs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('uid');
+  }
+
+  // Check if the user is logged in and navigate accordingly
+  void _checkUserLoginStatus() async {
+    String? userId = await _getUserIdFromPrefs();
+    if (userId != null) {
+      print('User ID: $userId');
+      // If the user is logged in, navigate to the home screen
+      Future.delayed(Duration(seconds: 3), () {
+        Get.offAll(() => BottumNavBar()); // Change this to your actual HomeScreen
+      });
+    } else {
+      print('No user logged in');
+      // If no user is logged in, navigate to the onboard screen
+      Future.delayed(Duration(seconds: 3), () {
+        Get.offAll(() => Onboard_screen()); // Navigate to Onboard_screen
+      });
+    }
   }
 
   @override
@@ -43,7 +66,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kblue, // Purple background
+      backgroundColor: kblue, // Background color
       body: Center(
         child: FadeTransition(
           opacity: _animation,
