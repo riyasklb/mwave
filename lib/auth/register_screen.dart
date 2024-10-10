@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:mwave/constants/colors.dart';
 import 'package:mwave/constants/widgets/custom_formfield.dart';
+import 'package:mwave/constants/widgets/custom_snackbar.dart';
+import 'package:mwave/controllers/auth_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:mwave/onboardvideo/video_scree.dart';
@@ -15,6 +19,7 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  final AuthController authController = Get.put(AuthController());
   final _formKey = GlobalKey<FormState>();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -30,55 +35,85 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _isOtpSent = false;
   String _verificationId = '';
 
-  void _sendOtp() async {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-      setState(() {
-        _isLoading = true;
-      });
+void _sendOtp() async {
+  if (_formKey.currentState!.validate()) {
+    _formKey.currentState!.save();
+    setState(() {
+      _isLoading = true;
+    });
 
-      try {
-        String phoneNumberWithPrefix = '+91' + _phone.trim();
+    try {
+      // Check if phone number is already registered
+      String phoneNumberWithPrefix = '+91' + _phone.trim();
+      QuerySnapshot existingUsers = await _firestore
+          .collection('users')
+          .where('phone', isEqualTo: _phone)
+          .get();
 
-        await _auth.verifyPhoneNumber(
-          phoneNumber: phoneNumberWithPrefix,
-          timeout: const Duration(seconds: 60),
-          verificationCompleted: (PhoneAuthCredential credential) async {
-            await _auth.signInWithCredential(credential);
-            await _saveUserToFirestore();
-          },
-          verificationFailed: (FirebaseAuthException e) {
-            setState(() {
-              _isLoading = false;
-            });
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Verification failed: ${e.message}')),
-            );
-          },
-          codeSent: (String verificationId, int? resendToken) {
-            setState(() {
-              _isLoading = false;
-              _isOtpSent = true;
-              _verificationId = verificationId;
-            });
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('OTP sent successfully!')),
-            );
-          },
-          codeAutoRetrievalTimeout: (String verificationId) {
-            _verificationId = verificationId;
-          },
-        );
-      } catch (e) {
+      if (existingUsers.docs.isNotEmpty) {
+        // Phone number already exists
         setState(() {
           _isLoading = false;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}')),
+
+      authController.showToasr(context,
+          text: 'Phone number is already registered!',
+          icon: Icons.error,
         );
+     
+        return;
       }
+
+      // Phone number does not exist, proceed with OTP verification
+      await _auth.verifyPhoneNumber(
+        phoneNumber: phoneNumberWithPrefix,
+        timeout: const Duration(seconds: 60),
+        verificationCompleted: (PhoneAuthCredential credential) async {
+          await _auth.signInWithCredential(credential);
+          await _saveUserToFirestore();
+        },
+        verificationFailed: (FirebaseAuthException e) {
+          setState(() {
+            _isLoading = false;
+          });
+  authController.showToasr(context,
+          text: 'Verification failed: ${e.message}',
+          icon: Icons.error,
+        );
+
+
+         
+        },
+        codeSent: (String verificationId, int? resendToken) {
+          setState(() {
+            _isLoading = false;
+            _isOtpSent = true;
+            _verificationId = verificationId;
+          });
+            authController.showToasr(context,
+          text: 'OTP sent successfully!',
+          icon: Icons.check,
+        );
+       
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {
+          _verificationId = verificationId;
+        },
+      );
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+
+           authController.showToasr(context,
+          text: 'Error: ${e.toString()}',
+          icon: Icons.error,
+        );
+     
     }
   }
+}
+
 
   void _verifyOtp() async {
     setState(() {
@@ -99,9 +134,14 @@ class _RegisterPageState extends State<RegisterPage> {
       setState(() {
         _isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('OTP verification failed: $e')),
-      );
+
+  authController.showToasr(context,
+          text: 'OTP verification failed: $e',
+          icon: Icons.error,
+        );
+     
+
+    
     }
   }
 
@@ -126,18 +166,23 @@ class _RegisterPageState extends State<RegisterPage> {
       setState(() {
         _isLoading = false;
       });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('User registered successfully with Referral ID!')),
-      );
+ authController.showToasr(context,
+          text: 'User registered successfully with Referral ID!',
+          icon: Icons.check,
+        );
+    
     } catch (e) {
       setState(() {
         _isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error saving user: $e')),
-      );
+authController.showToasr(context,
+          text: 'Error saving user: $e',
+          icon: Icons.error,
+        );
+
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(content: Text('Error saving user: $e')),
+      // );
     }
   }
 

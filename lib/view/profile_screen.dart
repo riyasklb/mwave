@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -35,8 +36,12 @@ class ProfileScreen extends StatelessWidget {
       body: FutureBuilder<Map<String, dynamic>>(
         future: _getUserDetails(),
         builder: (context, snapshot) {
+          // Skeleton loading
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator()); // Loading state
+            return Skeletonizer(
+              enabled: true,
+              child: _buildSkeletonLoading(), // Display skeleton when loading
+            );
           }
 
           if (snapshot.hasError) {
@@ -53,7 +58,7 @@ class ProfileScreen extends StatelessWidget {
             final String place = userData['place'] ?? 'No place';
             final String referralId = userData['referralId'] ?? 'No referral ID';
             final String uid = userData['uid'] ?? 'No UID';
-          //  final String avatarUrl = userData['avatar'] ?? 'assets/images/default_avatar.png';
+            // final String avatarUrl = userData['avatar'] ?? 'assets/images/default_avatar.png';
 
             return Stack(
               children: [
@@ -204,6 +209,64 @@ class ProfileScreen extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  // Function to build skeleton loading UI
+  Widget _buildSkeletonLoading() {
+    return ListView(
+      padding: EdgeInsets.all(16.w),
+      children: List.generate(6, (index) => _skeletonLoadingItem()), // Create multiple skeleton items
+    );
+  }
+
+  // Function to create a single skeleton loading item
+  Widget _skeletonLoadingItem() {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 10.h),
+      child: Skeletonizer(
+        enabled: true,
+        child: Container(
+          padding: EdgeInsets.all(20.w),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.9), // Slightly transparent white background
+            borderRadius: BorderRadius.circular(20), // Rounded corners
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                offset: const Offset(0, 5), // Shadow effect
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 28.w,
+                height: 28.w,
+                color: Colors.grey[300], // Placeholder for icon
+              ),
+              SizedBox(width: 15.w),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 100.w,
+                    height: 16.h,
+                    color: Colors.grey[300], // Placeholder for title
+                  ),
+                  SizedBox(height: 5.h),
+                  Container(
+                    width: 80.w,
+                    height: 16.h,
+                    color: Colors.grey[300], // Placeholder for value
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

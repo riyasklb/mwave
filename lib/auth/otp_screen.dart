@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mwave/constants/colors.dart';
+import 'package:mwave/controllers/auth_controller.dart';
 import 'package:mwave/view/bottumbar1.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -23,6 +24,7 @@ class OtpPage extends StatefulWidget {
 }
 
 class _OtpPageState extends State<OtpPage> {
+  final AuthController authController = Get.put(AuthController());
   final TextEditingController otpController = TextEditingController();
   bool isLoading = false;
   bool canResend = false;
@@ -70,14 +72,19 @@ class _OtpPageState extends State<OtpPage> {
       UserCredential userCredential =
           await _auth.signInWithCredential(credential);
 
+      // Store user ID in SharedPreferences
+      String userId = userCredential.user!.uid;
+      await _saveUserIdToPrefs(userId);
+
       // Check if phone number is already registered in Firestore
       await _checkUserByPhoneNumber(widget.phoneNumber);
     } catch (e) {
       setState(() {
         isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('OTP verification failed: $e')),
+      authController.showToasr(context,
+        text: 'OTP verification failed: $e',
+        icon: Icons.error,
       );
     }
   }
@@ -95,21 +102,22 @@ class _OtpPageState extends State<OtpPage> {
         String userId = userDoc.id;
         await _saveUserIdToPrefs(userId);
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('User found and logged in successfully!')),
+        authController.showToasr(context,
+          text: 'User found and logged in successfully!',
+          icon: Icons.check,
         );
 
         Get.offAll(BottumNavBar());
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('No account found with this phone number.')),
+        authController.showToasr(context,
+          text: 'No account found with this phone number.',
+          icon: Icons.error,
         );
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error fetching user details: $e')),
+      authController.showToasr(context,
+        text: 'Error fetching user details: $e',
+        icon: Icons.error,
       );
     } finally {
       setState(() {
@@ -121,7 +129,7 @@ class _OtpPageState extends State<OtpPage> {
   // Save user ID in SharedPreferences
   Future<void> _saveUserIdToPrefs(String userId) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('userId', userId);
+    await prefs.setString('uid', userId);
   }
 
   // Method to resend OTP
@@ -132,8 +140,9 @@ class _OtpPageState extends State<OtpPage> {
     });
     _startTimer();
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('OTP resent successfully!')),
+    authController.showToasr(context,
+      text: 'OTP resent successfully!',
+      icon: Icons.check,
     );
   }
 

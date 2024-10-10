@@ -1,6 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:mwave/auth/login_screen.dart';
 import 'package:mwave/constants/colors.dart';
@@ -11,11 +13,14 @@ import 'package:mwave/onboardvideo/video_scree.dart';
 import 'package:mwave/view/bottumbar1.dart';
 import 'package:mwave/view/refund_and_policy.dart';
 
+import 'controllers/auth_controller.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  Get.lazyPut(()=>AuthController());
   runApp(const MyApp());
 }
 

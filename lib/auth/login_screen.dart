@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Firestore for storing user details
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:mwave/constants/colors.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import 'package:mwave/controllers/auth_controller.dart';
 import 'otp_screen.dart';
 
 class LoginPage extends StatefulWidget {
@@ -12,74 +17,113 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+   final AuthController authController = Get.put(AuthController());
   final TextEditingController phoneController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool isLoading = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore =
+      FirebaseFirestore.instance; // Firestore instance
+
+  // Check if the phone number is registered in Firestore
+  Future<bool> isPhoneNumberRegistered(String phoneNumber) async {
+    final querySnapshot = await _firestore
+        .collection('users') // Assuming you have a collection named 'users'
+        .where('phone', isEqualTo: phoneNumber)
+        .get();
+
+    return querySnapshot
+        .docs.isNotEmpty; // If docs exist, phone number is registered
+  }
 
   void loginWithPhoneNumber() async {
     if (_formKey.currentState?.validate() ?? false) {
       setState(() {
         isLoading = true;
       });
-      try {
-        String phoneNumberWithPrefix = '+91' + phoneController.text.trim();
 
-        await _auth.verifyPhoneNumber(
-          phoneNumber: phoneNumberWithPrefix,
-          timeout: const Duration(seconds: 60),
-          verificationCompleted: (PhoneAuthCredential credential) async {
-            await _auth.signInWithCredential(credential);
-            setState(() {
-              isLoading = false;
-            });
-          },
-          verificationFailed: (FirebaseAuthException e) {
-            setState(() {
-              isLoading = false;
-            });
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Verification failed: ${e.message}')),
-            );
-          },
-          codeSent: (String verificationId, int? resendToken) {
-            setState(() {
-              isLoading = false;
-            });
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => OtpPage(
-                  phoneNumber: phoneController.text,
-                  verificationId: verificationId,
-                ),
-              ),
-            );
-          },
-          codeAutoRetrievalTimeout: (String verificationId) {},
+      String phoneNumberWithPrefix = '+91' + phoneController.text.trim();
+
+      // Check if the phone number is registered
+      bool isRegistered = await isPhoneNumberRegistered(phoneController.text);
+
+      if (isRegistered) {
+        try {
+          await _auth.verifyPhoneNumber(
+            phoneNumber: phoneNumberWithPrefix,
+            timeout: const Duration(seconds: 60),
+            verificationCompleted: (PhoneAuthCredential credential) async {
+              await _auth.signInWithCredential(credential);
+              setState(() {
+                isLoading = false;
+              });
+            },
+            verificationFailed: (FirebaseAuthException e) {
+              setState(() {
+                isLoading = false;
+              });
+  authController.showToasr(context,
+          text: 'Verification failed: ${e.message}',
+          icon: Icons.error,
         );
-      } catch (e) {
+
+              // ScaffoldMessenger.of(context).showSnackBar(
+              //   SnackBar(content: Text('Verification failed: ${e.message}')),
+              // );
+            },
+            codeSent: (String verificationId, int? resendToken) {
+              setState(() {
+                isLoading = false;
+              });
+              authController.showToasr(context,
+          text: 'OTP Sent to your phone',
+          icon: Icons.check,
+        );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => OtpPage(
+                    phoneNumber: phoneController.text,
+                    verificationId: verificationId,
+                  ),
+                ),
+              );
+            },
+            codeAutoRetrievalTimeout: (String verificationId) {},
+          );
+        } catch (e) {
+          setState(() {
+            isLoading = false;
+          });
+          authController.showToasr(context,
+          text: 'Error: ${e.toString()}',
+          icon: Icons.error,
+        );
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   SnackBar(content: Text('Error: ${e.toString()}')),
+          // );
+        }
+      } else {
         setState(() {
           isLoading = false;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}')),
+        authController.showToasr(context,
+          text: 'This phone number is not registered',
+          icon: Icons.error,
         );
+
+   
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Convert the Base64 string back into an image
-
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage(
-              custombagroundimage,
-            ),
+            image: AssetImage(custombagroundimage),
             fit: BoxFit.cover,
           ),
         ),
