@@ -7,6 +7,7 @@ import 'package:mwave/constants/colors.dart';
 import 'package:mwave/constants/widgets/custom_formfield.dart';
 import 'package:mwave/constants/widgets/custom_snackbar.dart';
 import 'package:mwave/controllers/auth_controller.dart';
+import 'package:mwave/view/bottumbar1.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:mwave/onboardvideo/video_scree.dart';
@@ -128,8 +129,7 @@ void _sendOtp() async {
 
       await _auth.signInWithCredential(credential);
       await _saveUserToFirestore();
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (context) => VideoSelectionScreen()));
+     Get.offAll( BottumNavBar());
     } catch (e) {
       setState(() {
         _isLoading = false;

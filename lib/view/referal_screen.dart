@@ -48,18 +48,20 @@ class _ReferralScreenState extends State<ReferralScreen> {
     }
   }
 
+  // Method to add referral and manage the chain
   Future<void> addReferral(String referralId) async {
     try {
-      print(referralUsed);
+      // Fetch the current user's document (User C)
+      var userDoc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      
       // Step 1: Check if the user (C) has already used a referral code
-      if (referralUsed) {
-
+      if (userDoc.exists && userDoc.data()!.containsKey('referralUsed') && userDoc['referralUsed'] == true) {
         Get.snackbar(
           'Error',
           'You have already used a referral code.',
           snackPosition: SnackPosition.BOTTOM,
         );
-        return;
+        return; // Prevent further execution if the referral is already used
       }
 
       // Step 2: Find the user with the referralId (User B)
@@ -67,23 +69,32 @@ class _ReferralScreenState extends State<ReferralScreen> {
           .collection('users')
           .where('referralId', isEqualTo: referralId)
           .get();
- print('----------------------1------------------------------');
+
       if (referrerDoc.docs.isNotEmpty) {
         // User B found
-         print('-------------------2---------------------------------');
         String referrerUid = referrerDoc.docs.first.id;
         var referrerData = referrerDoc.docs.first.data();
- print('---------------------------3-------------------------');
+        
         // Step 3: Update User B's wallet (add ₹50)
         int referrerWallet = referrerData.containsKey('wallet') ? referrerData['wallet'] : 0;
         await FirebaseFirestore.instance.collection('users').doc(referrerUid).update({
           'wallet': referrerWallet + 50,
-          
         });
- print('-----------------------------4-----------------------');
-        // Step 4: Check if User B has a referrer (User A)
+        
+        // Step 4: Add User C to User B's referral list
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(referrerUid)
+            .collection('referrals')
+            .doc(uid)
+            .set({
+          'username': username,
+          'email': email,
+          'referredOn': DateTime.now(),
+        });
+
+        // Step 5: Check if User B has a referrer (User A)
         if (referrerData.containsKey('referrerUid')) {
-          print('---------------------5--------------${referrerData['referrerUid']}-----------------');
           String firstReferrerUid = referrerData['referrerUid'];
 
           // Fetch User A (the first referrer)
@@ -95,20 +106,19 @@ class _ReferralScreenState extends State<ReferralScreen> {
                 ? firstReferrerDoc['wallet']
                 : 0;
 
-            // Step 5: Add ₹10 to User A's wallet
+            // Add ₹10 to User A's wallet
             await FirebaseFirestore.instance.collection('users').doc(firstReferrerUid).update({
               'wallet': firstReferrerWallet + 10,
             });
 
             print('Added ₹10 to User A\'s wallet');
-          } else {
-            print('First referrer (User A) not found.');
           }
         }
 
         // Step 6: Mark referral as used for the current user (User C)
         await FirebaseFirestore.instance.collection('users').doc(uid).update({
-          'referralUsed': true,
+          'referralUsed': true, // Mark that the referral has been used
+          'referrerUid': referrerUid, // Save the referrer UID for User C
         });
 
         Get.snackbar(
@@ -130,6 +140,36 @@ class _ReferralScreenState extends State<ReferralScreen> {
         'An error occurred. Please try again later.',
         snackPosition: SnackPosition.BOTTOM,
       );
+    }
+  }
+
+  // Function to register user with referral code and save referrerUid
+  Future<void> registerUserWithReferral(String referralCode, String currentUserUid) async {
+    try {
+      // Assume referralCode belongs to User A (the referrer)
+      var referrerDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .where('referralId', isEqualTo: referralCode)
+          .get();
+
+      if (referrerDoc.docs.isNotEmpty) {
+        // User A (the referrer) is found
+        String referrerUid = referrerDoc.docs.first.id;
+
+        // Save the current user (User B) with the referrerUid
+        await FirebaseFirestore.instance.collection('users').doc(currentUserUid).set({
+          'referrerUid': referrerUid,
+          'wallet': 0, // Initial wallet amount, can be modified
+          'referralUsed': false, // User B hasn't used the referral yet
+          // Other user details...
+        });
+
+        print('User B registered with referrerUid: $referrerUid');
+      } else {
+        print('Invalid referral code.');
+      }
+    } catch (e) {
+      print('Error registering with referral: $e');
     }
   }
 
@@ -172,7 +212,6 @@ class _ReferralScreenState extends State<ReferralScreen> {
                 } else {
                   String referralId = _referralCodeController.text.trim();
                   if (referralId.isNotEmpty) {
-                    print(referralId);
                     addReferral(referralId);
                   } else {
                     Get.snackbar(
