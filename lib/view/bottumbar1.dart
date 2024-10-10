@@ -53,7 +53,7 @@ class _BottumNavBarState extends State<BottumNavBar> {
           ? AnimatedNotchBottomBar(
               /// Provide NotchBottomBarController
               notchBottomBarController: _controller,
-              color:Color(0xFF9B87D5),
+              color: Color(0xFF9B87D5),
               showLabel: true,
               textOverflow: TextOverflow.visible,
               maxLine: 1,
@@ -63,11 +63,7 @@ class _BottumNavBarState extends State<BottumNavBar> {
               notchShader: SweepGradient(
                 startAngle: 0,
                 endAngle: pi / 2,
-                colors: [
-                  kblue,
-                  kblue,
-                  kblue
-                ],
+                colors: [kblue, kblue, kblue],
                 tileMode: TileMode.mirror,
               ).createShader(Rect.fromCircle(center: Offset.zero, radius: 8.0)),
               notchColor: Colors.black87,

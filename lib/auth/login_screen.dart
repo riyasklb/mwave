@@ -23,7 +23,6 @@ class _LoginPageState extends State<LoginPage> {
         isLoading = true;
       });
       try {
-        // Add +91 prefix to the phone number
         String phoneNumberWithPrefix = '+91' + phoneController.text.trim();
 
         await _auth.verifyPhoneNumber(
@@ -34,7 +33,6 @@ class _LoginPageState extends State<LoginPage> {
             setState(() {
               isLoading = false;
             });
-            // Handle successful login if auto verification happens
           },
           verificationFailed: (FirebaseAuthException e) {
             setState(() {
@@ -58,9 +56,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             );
           },
-          codeAutoRetrievalTimeout: (String verificationId) {
-            // Handle auto-retrieve timeout
-          },
+          codeAutoRetrievalTimeout: (String verificationId) {},
         );
       } catch (e) {
         setState(() {
@@ -75,29 +71,43 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Convert the Base64 string back into an image
+
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text(
-          'Log in',
-          style: TextStyle(color: kwhite),
-        ),
-        backgroundColor: kblue,
-      ),
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [kblue, const Color(0xFF8E2DE2)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+          image: DecorationImage(
+            image: AssetImage(
+              custombagroundimage,
+            ),
+            fit: BoxFit.cover,
           ),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: Form(
           key: _formKey,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              kheight40,
+              AppBar(
+                automaticallyImplyLeading: false,
+                title: Text(
+                  'Log in',
+                  style: GoogleFonts.poppins(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+                backgroundColor: Colors.transparent,
+              ),
+              kheight40,
+              kheight40,
+              kheight40,
+              kheight40,
+              kheight40,
+              kheight40,
               Text(
                 'Enter your phone number',
                 style: GoogleFonts.poppins(
@@ -110,7 +120,9 @@ class _LoginPageState extends State<LoginPage> {
               TextFormField(
                 controller: phoneController,
                 decoration: InputDecoration(
-                  hintText: 'e.g. 9633749714',
+                  hintStyle:
+                      TextStyle(fontWeight: FontWeight.w400, fontSize: 13),
+                  hintText: 'Please enter your phone number',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: const BorderSide(color: Colors.white),
@@ -121,8 +133,26 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   filled: true,
                   fillColor: Colors.white,
-                  prefixText: '+91 ',
-                  contentPadding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 10.0),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.only(left: 10.0, right: 5.0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          '🇮🇳', // Indian flag emoji as the icon
+                          style: TextStyle(fontSize: 18),
+                        ),
+                        const SizedBox(
+                            width: 5), // Spacing between flag and prefix text
+                        Text(
+                          '+91',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ],
+                    ),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                      vertical: 16.0, horizontal: 10.0),
                 ),
                 keyboardType: TextInputType.phone,
                 validator: (value) {
@@ -153,6 +183,10 @@ class _LoginPageState extends State<LoginPage> {
                       : const Text('Login with OTP'),
                 ),
               ),
+              kheight40,
+              kheight40,
+              kheight40,
+              kheight40,
             ],
           ),
         ),

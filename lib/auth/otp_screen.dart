@@ -1,6 +1,9 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:mwave/constants/colors.dart';
 import 'package:mwave/view/bottumbar1.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,9 +25,32 @@ class OtpPage extends StatefulWidget {
 class _OtpPageState extends State<OtpPage> {
   final TextEditingController otpController = TextEditingController();
   bool isLoading = false;
+  bool canResend = false;
+  int timerSeconds = 30;
+  Timer? _timer;
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    _startTimer();
+  }
+
+  // Method to start the OTP expiration timer
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        if (timerSeconds > 0) {
+          timerSeconds--;
+        } else {
+          canResend = true;
+          timer.cancel();
+        }
+      });
+    });
+  }
 
   // Method to verify OTP
   void _verifyOtp() async {
@@ -41,11 +67,9 @@ class _OtpPageState extends State<OtpPage> {
       );
 
       // Sign in with the OTP credential
-      UserCredential userCredential = await _auth.signInWithCredential(credential);
+      UserCredential userCredential =
+          await _auth.signInWithCredential(credential);
 
-      // Get user ID from Firebase Auth
-      String userId = userCredential.user!.uid;
-print('----------------------------------------${widget.phoneNumber}}---------------------------------');
       // Check if phone number is already registered in Firestore
       await _checkUserByPhoneNumber(widget.phoneNumber);
     } catch (e) {
@@ -61,34 +85,26 @@ print('----------------------------------------${widget.phoneNumber}}-----------
   // Method to check user details by phone number
   Future<void> _checkUserByPhoneNumber(String phoneNumber) async {
     try {
-      // Query Firestore for a user with the provided phone number
       QuerySnapshot querySnapshot = await _firestore
           .collection('users')
           .where('phone', isEqualTo: phoneNumber)
           .get();
 
       if (querySnapshot.docs.isNotEmpty) {
-        // User with this phone number exists
         DocumentSnapshot userDoc = querySnapshot.docs.first;
-
-        // Get the user ID (uid) from the document
         String userId = userDoc.id;
-
-        // Store the user ID in SharedPreferences
         await _saveUserIdToPrefs(userId);
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('User found and logged in successfully!')),
+          const SnackBar(
+              content: Text('User found and logged in successfully!')),
         );
 
-        // Navigate to the next screen
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => BottumNavBar()),
-        );
+        Get.offAll(BottumNavBar());
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No account found with this phone number.')),
+          const SnackBar(
+              content: Text('No account found with this phone number.')),
         );
       }
     } catch (e) {
@@ -108,36 +124,113 @@ print('----------------------------------------${widget.phoneNumber}}-----------
     await prefs.setString('userId', userId);
   }
 
+  // Method to resend OTP
+  void _resendOtp() {
+    setState(() {
+      canResend = false;
+      timerSeconds = 30;
+    });
+    _startTimer();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('OTP resent successfully!')),
+    );
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Enter OTP',
-          style: TextStyle(color: Colors.white),
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(custombagroundimage), // Background image path
+            fit: BoxFit.cover,
+          ),
         ),
-        backgroundColor: kblue,
-      ),
-      body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            const Text(
+            kheight40,
+            AppBar(
+              automaticallyImplyLeading: false,
+              title: Text(
+                'Enter OTP',
+                style: GoogleFonts.poppins(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+              backgroundColor: Colors.transparent,
+            ),
+            kheight40,
+            kheight40,
+            kheight40,
+            kheight40,
+            const SizedBox(height: 24),
+            Text(
               'Enter the OTP sent to your phone',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              style: GoogleFonts.poppins(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
             ),
             const SizedBox(height: 16),
             TextFormField(
               controller: otpController,
-              decoration: const InputDecoration(
-                labelText: 'OTP',
-                hintText: '000000',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                hintText: 'Enter OTP',
+                hintStyle: TextStyle(
+                  color: kblack,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 12,
+                ),
+                filled: true,
+                fillColor: Colors.white.withOpacity(0.7),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0), // Rounded border
+                  borderSide: BorderSide.none, // No border line
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: BorderSide.none,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: BorderSide(
+                    color: kblue, // Change the border color when focused
+                    width: 1.0, // Thickness of the border when focused
+                  ),
+                ),
               ),
               keyboardType: TextInputType.number,
             ),
             const SizedBox(height: 24),
+            if (timerSeconds > 0)
+              Text(
+                'Resend OTP in $timerSeconds seconds',
+                style: const TextStyle(color: Colors.white70),
+              ),
+            if (timerSeconds == 0)
+              TextButton(
+                onPressed: canResend ? _resendOtp : null,
+                child: Text(
+                  'Resend OTP',
+                  style: TextStyle(
+                    color: canResend ? Colors.white : Colors.grey,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(

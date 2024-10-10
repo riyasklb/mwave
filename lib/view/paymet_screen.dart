@@ -58,13 +58,13 @@ class _PaymentPageState extends State<PaymentPage> {
               onPressed: () {
                   Razorpay razorpay = Razorpay();
                   var options = {
-                    'key': 'rzp_live_ILgsfZCZoFIKMb',
+                    'key': 'rzp_test_sWnFHSJbOds7ZX',
                     'amount': 100,
                     'name': 'Acme Corp.',
                     'description': 'Fine T-Shirt',
                     'retry': {'enabled': true, 'max_count': 1},
                     'send_sms_hash': true,
-                    'prefill': {'contact': '8888888888', 'email': 'test@razorpay.com'},
+                    'prefill': {'contact': '9633749714', 'email': 'test@razorpay.com'},
                     'external': {
                       'wallets': ['paytm']
                     }

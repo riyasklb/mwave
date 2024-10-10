@@ -46,7 +46,8 @@ class _SplashScreenState extends State<SplashScreen>
       print('User ID: $userId');
       // If the user is logged in, navigate to the home screen
       Future.delayed(Duration(seconds: 3), () {
-        Get.offAll(() => BottumNavBar()); // Change this to your actual HomeScreen
+        Get.offAll(
+            () => BottumNavBar()); // Change this to your actual HomeScreen
       });
     } else {
       print('No user logged in');

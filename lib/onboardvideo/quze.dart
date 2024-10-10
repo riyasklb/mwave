@@ -7,24 +7,25 @@ class QuizScreen extends StatefulWidget {
   final int videoNumber;
   final String language; // Pass the language code (e.g., 'en' or 'ta')
 
-  const QuizScreen({Key? key, required this.videoNumber, required this.language}) : super(key: key);
+  const QuizScreen(
+      {Key? key, required this.videoNumber, required this.language})
+      : super(key: key);
 
   @override
   _QuizScreenState createState() => _QuizScreenState();
 }
 
 class _QuizScreenState extends State<QuizScreen> {
-  final List<int> _selectedAnswers = [0, 0, 0, 0, 0,0]; // 5 questions
+  final List<int> _selectedAnswers = [0, 0, 0, 0, 0, 0]; // 5 questions
   bool _isSubmitted = false;
 
   // Correct answers mapping
   final Map<int, int> _correctAnswers = {
-   0:1,
+    0: 1,
     1: 1, // Correct answer for Q2
     2: 1, // Correct answer for Q3
     3: 0, // Correct answer for Q4
     4: 0, // Correct answer for Q5
-    
   };
 
   // Track whether the correct answer is blinking
@@ -91,7 +92,8 @@ class _QuizScreenState extends State<QuizScreen> {
                   child: ElevatedButton(
                     onPressed: () {
                       // Navigate to Home Screen
-                      Get.offAll(PaymentPage()); // Assuming you have a HomeScreen widget
+                      Get.offAll(
+                          PaymentPage()); // Assuming you have a HomeScreen widget
                     },
                     child: Text('Go to Payment Screen'),
                   ),
@@ -212,7 +214,8 @@ class _QuizScreenState extends State<QuizScreen> {
             for (int j = 0; j < options.length; j++)
               AnimatedContainer(
                 duration: Duration(milliseconds: 300),
-                color: _getAnswerColor(j, questionNumber - 1, isCorrectBlinking, isWrongBlinking),
+                color: _getAnswerColor(
+                    j, questionNumber - 1, isCorrectBlinking, isWrongBlinking),
                 child: RadioListTile<int>(
                   title: Text(options[j]),
                   value: j, // Option index as value
@@ -230,20 +233,25 @@ class _QuizScreenState extends State<QuizScreen> {
     );
   }
 
-  Color _getAnswerColor(int optionIndex, int questionIndex, bool isCorrectBlinking, bool isWrongBlinking) {
+  Color _getAnswerColor(int optionIndex, int questionIndex,
+      bool isCorrectBlinking, bool isWrongBlinking) {
     // Check if the answer is submitted
     if (_isSubmitted) {
       if (optionIndex == _correctAnswers[questionIndex + 1]) {
-        return Colors.green.withOpacity(0.5); // Correct answer highlighted green
+        return Colors.green
+            .withOpacity(0.5); // Correct answer highlighted green
       } else if (optionIndex == _selectedAnswers[questionIndex]) {
-        return Colors.red.withOpacity(0.5); // Selected wrong answer highlighted red
+        return Colors.red
+            .withOpacity(0.5); // Selected wrong answer highlighted red
       }
     }
 
     // Check blinking effect
-    if (isCorrectBlinking && optionIndex == _correctAnswers[questionIndex + 1]) {
+    if (isCorrectBlinking &&
+        optionIndex == _correctAnswers[questionIndex + 1]) {
       return Colors.green.withOpacity(0.5); // Correct answer blinking green
-    } else if (isWrongBlinking && optionIndex == _selectedAnswers[questionIndex]) {
+    } else if (isWrongBlinking &&
+        optionIndex == _selectedAnswers[questionIndex]) {
       return Colors.red.withOpacity(0.5); // Wrong answer blinking red
     }
 
