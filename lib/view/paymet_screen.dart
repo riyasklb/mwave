@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mwave/view/bottumbar1.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class PaymentPage extends StatefulWidget {
@@ -59,7 +62,7 @@ class _PaymentPageState extends State<PaymentPage> {
                   Razorpay razorpay = Razorpay();
                   var options = {
                     'key': 'rzp_test_sWnFHSJbOds7ZX',
-                    'amount': 100,
+                    'amount': 10000,
                     'name': 'Acme Corp.',
                     'description': 'Fine T-Shirt',
                     'retry': {'enabled': true, 'max_count': 1},
@@ -157,6 +160,7 @@ class _PaymentPageState extends State<PaymentPage> {
     * 2. Payment ID
     * 3. Signature
     * */
+    Get.offAll(BottumNavBar());
     showAlertDialog(context, "Payment Successful", "Payment ID: ${response.paymentId}");
   }
 

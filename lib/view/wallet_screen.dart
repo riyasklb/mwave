@@ -1,12 +1,54 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:mwave/constants/colors.dart';
-import 'package:mwave/controllers/wallet_conrtoler.dart';
-// Assume you have a WalletController for handling wallet logic
 import 'package:get/get.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-class WalletScreen extends StatelessWidget {
-  final WalletController walletController = Get.put(WalletController());
+class WalletScreen extends StatefulWidget {
+  @override
+  _WalletScreenState createState() => _WalletScreenState();
+}
+
+class _WalletScreenState extends State<WalletScreen> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  int walletAmount = 0;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadWalletAmount();
+  }
+
+  Future<void> _loadWalletAmount() async {
+    try {
+      User? currentUser = _auth.currentUser;
+
+      if (currentUser != null) {
+        var userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(currentUser.uid)
+            .get();
+
+        if (userDoc.exists) {
+          setState(() {
+            walletAmount = userDoc.data()?['wallet'] ?? 0; // Default to 0 if no wallet field
+            isLoading = false;
+          });
+        }
+      }
+    } catch (e) {
+      print('Error fetching wallet amount: $e');
+      Get.snackbar(
+        'Error',
+        'Unable to fetch wallet amount. Please try again later.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,129 +56,39 @@ class WalletScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'Wallet',
-          style: GoogleFonts.poppins(
-              fontSize: 20, fontWeight: FontWeight.w600, color: kwhite),
+          style: GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.w600),
         ),
-        backgroundColor: kblue,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Balance Section
-            Text(
-              'Balance',
-              style: GoogleFonts.poppins(
-                  fontSize: 18, fontWeight: FontWeight.w600),
-            ),
-            SizedBox(height: 8),
-            Obx(() => Text(
-                  '\$${walletController.balance.value.toStringAsFixed(2)}',
-                  style: GoogleFonts.poppins(
-                      fontSize: 36, fontWeight: FontWeight.bold, color: kblue),
-                )),
-            SizedBox(height: 40),
-
-            // Transaction History Section
-            Text(
-              'Transaction History',
-              style: GoogleFonts.poppins(
-                  fontSize: 18, fontWeight: FontWeight.w600),
-            ),
-            SizedBox(height: 16),
-            Expanded(
-              child: Obx(() {
-                if (walletController.transactions.isEmpty) {
-                  return Center(
-                    child: Text(
-                      'No transactions yet.',
-                      style: GoogleFonts.poppins(color: Colors.grey),
+      body: Center(
+        child: isLoading
+            ? CircularProgressIndicator()
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Your Wallet Balance',
+                    style: GoogleFonts.poppins(fontSize: 24, fontWeight: FontWeight.w500),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    '₹$walletAmount',
+                    style: GoogleFonts.poppins(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green,
                     ),
-                  );
-                }
-                return ListView.builder(
-                  itemCount: walletController.transactions.length,
-                  itemBuilder: (context, index) {
-                    final transaction = walletController.transactions[index];
-                    return ListTile(
-                      title: Text(
-                        transaction.description,
-                        style: GoogleFonts.poppins(),
-                      ),
-                      subtitle: Text(
-                        transaction.date.toString(),
-                        style: GoogleFonts.poppins(color: Colors.grey),
-                      ),
-                      trailing: Text(
-                        '\$${transaction.amount.toStringAsFixed(2)}',
-                        style: GoogleFonts.poppins(
-                            color: transaction.amount >= 0
-                                ? Colors.green
-                                : Colors.red),
-                      ),
-                    );
-                  },
-                );
-              }),
-            ),
-
-            // Action Buttons
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    // Navigate to Add Funds screen
-                    Get.to(AddFundsScreen());
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: kblue,
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    textStyle: const TextStyle(fontSize: 16),
                   ),
-                  child: const Text('Add Funds'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    // Navigate to Withdraw Funds screen
-                    Get.to(WithdrawFundsScreen());
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: kblue,
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    textStyle: const TextStyle(fontSize: 16),
+                  SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: _loadWalletAmount,
+                    child: Text(
+                      'Refresh',
+                      style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500),
+                    ),
                   ),
-                  child: const Text('Withdraw'),
-                ),
-              ],
-            ),
-          ],
-        ),
+                ],
+              ),
       ),
-    );
-  }
-}
-
-// Assuming you have AddFundsScreen and WithdrawFundsScreen implemented
-class AddFundsScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    // Add your implementation for adding funds
-    return Scaffold(
-      appBar: AppBar(title: Text('Add Funds')),
-      body: Center(child: Text('Add Funds Functionality')),
-    );
-  }
-}
-
-class WithdrawFundsScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    // Add your implementation for withdrawing funds
-    return Scaffold(
-      appBar: AppBar(title: Text('Withdraw')),
-      body: Center(child: Text('Withdraw Funds Functionality')),
     );
   }
 }

@@ -28,7 +28,7 @@ class _OtpPageState extends State<OtpPage> {
   final TextEditingController otpController = TextEditingController();
   bool isLoading = false;
   bool canResend = false;
-  int timerSeconds = 30;
+  int timerSeconds = 300;
   Timer? _timer;
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -183,6 +183,8 @@ class _OtpPageState extends State<OtpPage> {
             kheight40,
             kheight40,
             kheight40,
+            kheight40,
+       
             const SizedBox(height: 24),
             Text(
               'Enter the OTP sent to your phone',
@@ -226,7 +228,7 @@ class _OtpPageState extends State<OtpPage> {
             if (timerSeconds > 0)
               Text(
                 'Resend OTP in $timerSeconds seconds',
-                style: const TextStyle(color: Colors.white70),
+                style: const TextStyle(color: Colors.grey),
               ),
             if (timerSeconds == 0)
               TextButton(
@@ -234,7 +236,7 @@ class _OtpPageState extends State<OtpPage> {
                 child: Text(
                   'Resend OTP',
                   style: TextStyle(
-                    color: canResend ? Colors.white : Colors.grey,
+                    color: canResend ? Colors.grey : Colors.grey,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
