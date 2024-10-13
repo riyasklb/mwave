@@ -1,13 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mwave/constants/colors.dart';
 import 'package:mwave/controllers/auth_controller.dart';
-import 'package:mwave/view/bottumbar1.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class OtpPage extends StatefulWidget {
   final String phoneNumber;
@@ -26,13 +22,11 @@ class OtpPage extends StatefulWidget {
 class _OtpPageState extends State<OtpPage> {
   final AuthController authController = Get.put(AuthController());
   final TextEditingController otpController = TextEditingController();
+  
   bool isLoading = false;
   bool canResend = false;
-  int timerSeconds = 300;
+  int timerSeconds = 30;
   Timer? _timer;
-
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   void initState() {
@@ -40,7 +34,6 @@ class _OtpPageState extends State<OtpPage> {
     _startTimer();
   }
 
-  // Method to start the OTP expiration timer
   void _startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
@@ -54,71 +47,17 @@ class _OtpPageState extends State<OtpPage> {
     });
   }
 
-  // Method to verify OTP
   void _verifyOtp() async {
     setState(() {
       isLoading = true;
     });
 
+    String otp = otpController.text.trim();
+
     try {
-      String _otp = otpController.text.trim();
-
-      PhoneAuthCredential credential = PhoneAuthProvider.credential(
-        verificationId: widget.verificationId,
-        smsCode: _otp,
-      );
-
-      // Sign in with the OTP credential
-      UserCredential userCredential =
-          await _auth.signInWithCredential(credential);
-
-      // Store user ID in SharedPreferences
-      String userId = userCredential.user!.uid;
-      await _saveUserIdToPrefs(userId);
-
-      // Check if phone number is already registered in Firestore
-      await _checkUserByPhoneNumber(widget.phoneNumber);
+      await authController.verifyOtp(widget.verificationId, otp);
     } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      authController.showToasr(context,
-        text: 'OTP verification failed: $e',
-        icon: Icons.error,
-      );
-    }
-  }
-
-  // Method to check user details by phone number
-  Future<void> _checkUserByPhoneNumber(String phoneNumber) async {
-    try {
-      QuerySnapshot querySnapshot = await _firestore
-          .collection('users')
-          .where('phone', isEqualTo: phoneNumber)
-          .get();
-
-      if (querySnapshot.docs.isNotEmpty) {
-        DocumentSnapshot userDoc = querySnapshot.docs.first;
-        String userId = userDoc.id;
-        await _saveUserIdToPrefs(userId);
-
-        authController.showToasr(context,
-          text: 'User found and logged in successfully!',
-          icon: Icons.check,
-        );
-
-        Get.offAll(BottumNavBar());
-      } else {
-        authController.showToasr(context,
-          text: 'No account found with this phone number.',
-          icon: Icons.error,
-        );
-      }
-    } catch (e) {
-      authController.showToasr(context,
-        text: 'Error fetching user details: $e',
-        icon: Icons.error,
-      );
+      // Handle errors here (if necessary)
     } finally {
       setState(() {
         isLoading = false;
@@ -126,24 +65,15 @@ class _OtpPageState extends State<OtpPage> {
     }
   }
 
-  // Save user ID in SharedPreferences
-  Future<void> _saveUserIdToPrefs(String userId) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('uid', userId);
-  }
-
-  // Method to resend OTP
   void _resendOtp() {
-    setState(() {
-      canResend = false;
-      timerSeconds = 30;
-    });
-    _startTimer();
-
-    authController.showToasr(context,
-      text: 'OTP resent successfully!',
-      icon: Icons.check,
-    );
+    if (canResend) {
+      setState(() {
+        canResend = false;
+        timerSeconds = 30; // Reset the timer
+      });
+      _startTimer();
+      authController.resendOtp(widget.phoneNumber, context);
+    }
   }
 
   @override
@@ -155,109 +85,159 @@ class _OtpPageState extends State<OtpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(custombagroundimage), // Background image path
-            fit: BoxFit.cover,
+      body: _buildBody(),
+    );
+  }
+
+  Widget _buildBody() {
+    return Container(
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(custombagroundimage), // Background image path
+          fit: BoxFit.cover,
+        ),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      child: Stack(
+        children: [
+          _buildAppBar(),
+          _buildOtpForm(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAppBar() {
+    return Positioned(
+      top: 40,
+      left: 0,
+      right: 0,
+      child: AppBar(
+        automaticallyImplyLeading: false,
+        title: Text(
+          'Enter OTP',
+          style: GoogleFonts.poppins(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
           ),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+        backgroundColor: Colors.transparent,
+      ),
+    );
+  }
+
+  Widget _buildOtpForm() {
+    return Center(
+      child: SingleChildScrollView(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            kheight40,
-            AppBar(
-              automaticallyImplyLeading: false,
-              title: Text(
-                'Enter OTP',
-                style: GoogleFonts.poppins(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
-              ),
-              backgroundColor: Colors.transparent,
-            ),
-            kheight40,
-            kheight40,
-            kheight40,
-            kheight40,
-            kheight40,
-       
-            const SizedBox(height: 24),
-            Text(
-              'Enter the OTP sent to your phone',
-              style: GoogleFonts.poppins(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
-            ),
+            const SizedBox(height: 60), // Space for the AppBar
+            _buildOtpInstructions(),
             const SizedBox(height: 16),
-            TextFormField(
-              controller: otpController,
-              decoration: InputDecoration(
-                hintText: 'Enter OTP',
-                hintStyle: TextStyle(
-                  color: kblack,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 12,
-                ),
-                filled: true,
-                fillColor: Colors.white.withOpacity(0.7),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30.0), // Rounded border
-                  borderSide: BorderSide.none, // No border line
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                  borderSide: BorderSide.none,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                  borderSide: BorderSide(
-                    color: kblue, // Change the border color when focused
-                    width: 1.0, // Thickness of the border when focused
-                  ),
-                ),
-              ),
-              keyboardType: TextInputType.number,
-            ),
+            _buildOtpInputField(),
             const SizedBox(height: 24),
-            if (timerSeconds > 0)
-              Text(
-                'Resend OTP in $timerSeconds seconds',
-                style: const TextStyle(color: Colors.grey),
-              ),
-            if (timerSeconds == 0)
-              TextButton(
-                onPressed: canResend ? _resendOtp : null,
-                child: Text(
-                  'Resend OTP',
-                  style: TextStyle(
-                    color: canResend ? Colors.grey : Colors.grey,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+            _buildResendOtpButton(),
             const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: isLoading ? null : _verifyOtp,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: kblue,
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  textStyle: const TextStyle(fontSize: 18),
-                ),
-                child: isLoading
-                    ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text('Verify OTP'),
-              ),
-            ),
+            _buildVerifyButton(),
+            const SizedBox(height: 16),
+            _buildEditPhoneNumberButton(),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildOtpInstructions() {
+    return Text(
+      'Enter the OTP sent to your phone',
+      style: GoogleFonts.poppins(
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+        color: Colors.white,
+      ),
+      textAlign: TextAlign.center,
+    );
+  }
+
+  Widget _buildOtpInputField() {
+    return TextFormField(
+      controller: otpController,
+      decoration: InputDecoration(
+        hintText: 'Enter OTP',
+        hintStyle: const TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.w400,
+          fontSize: 12,
+        ),
+        filled: true,
+        fillColor: Colors.white.withOpacity(0.7),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30.0),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30.0),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30.0),
+          borderSide: const BorderSide(
+            color: Colors.blue,
+            width: 1.0,
+          ),
+        ),
+      ),
+      keyboardType: TextInputType.number,
+    );
+  }
+
+  Widget _buildResendOtpButton() {
+    if (timerSeconds > 0) {
+      return Text(
+        'Resend OTP in $timerSeconds seconds',
+        style: const TextStyle(color: Colors.grey),
+      );
+    } else {
+      return TextButton(
+        onPressed: _resendOtp,
+        child: Text(
+          'Resend OTP',
+          style: TextStyle(
+            color: canResend ? kblue : Colors.grey,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      );
+    }
+  }
+
+  Widget _buildVerifyButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: isLoading ? null : _verifyOtp,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: kblue,
+          padding: const EdgeInsets.symmetric(vertical: 16.0),
+          textStyle: const TextStyle(fontSize: 18),
+        ),
+        child: isLoading
+            ? const CircularProgressIndicator(color: Colors.white)
+            : const Text('Verify OTP'),
+      ),
+    );
+  }
+
+  Widget _buildEditPhoneNumberButton() {
+    return TextButton(
+      onPressed: () {
+        Get.back(); // Navigate back to the previous screen
+      },
+      child: Text(
+        'Edit Phone Number',
+        style: TextStyle(color: kblue),
       ),
     );
   }

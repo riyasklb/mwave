@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mwave/auth/login_screen.dart';
 import 'package:mwave/auth/register_screen.dart';
@@ -78,11 +80,9 @@ class Onboard_screen extends StatelessWidget {
                         elevation: 5, // Shadow effect
                       ),
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const LoginPage()),
-                        );
+
+                        Get.to(LoginPage());
+                     
                       },
                       child: Text(
                         'Log in',

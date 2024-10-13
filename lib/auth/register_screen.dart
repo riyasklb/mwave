@@ -57,7 +57,7 @@ void _sendOtp() async {
           _isLoading = false;
         });
 
-      authController.showToasr(context,
+      authController.showToast(context,
           text: 'Phone number is already registered!',
           icon: Icons.error,
         );
@@ -77,7 +77,7 @@ void _sendOtp() async {
           setState(() {
             _isLoading = false;
           });
-  authController.showToasr(context,
+  authController.showToast(context,
           text: 'Verification failed: ${e.message}',
           icon: Icons.error,
         );
@@ -91,7 +91,7 @@ void _sendOtp() async {
             _isOtpSent = true;
             _verificationId = verificationId;
           });
-            authController.showToasr(context,
+            authController.showToast(context,
           text: 'OTP sent successfully!',
           icon: Icons.check,
         );
@@ -106,7 +106,7 @@ void _sendOtp() async {
         _isLoading = false;
       });
 
-           authController.showToasr(context,
+           authController.showToast(context,
           text: 'Error: ${e.toString()}',
           icon: Icons.error,
         );
@@ -135,7 +135,7 @@ void _sendOtp() async {
         _isLoading = false;
       });
 
-  authController.showToasr(context,
+  authController.showToast(context,
           text: 'OTP verification failed: $e',
           icon: Icons.error,
         );
@@ -166,7 +166,7 @@ void _sendOtp() async {
       setState(() {
         _isLoading = false;
       });
- authController.showToasr(context,
+ authController.showToast(context,
           text: 'User registered successfully with Referral ID!',
           icon: Icons.check,
         );
@@ -175,7 +175,7 @@ void _sendOtp() async {
       setState(() {
         _isLoading = false;
       });
-authController.showToasr(context,
+authController.showToast(context,
           text: 'Error saving user: $e',
           icon: Icons.error,
         );
