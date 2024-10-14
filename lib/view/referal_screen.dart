@@ -33,8 +33,9 @@ class ReferralScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildAppBar(),
-                        if (!controller.referralUsed) // Only show if referral not used
+                        
+                        if (!controller.referralUsed)
+                         // Only show if referral not used
                           _buildReferralInput(controller),
                         SizedBox(height: 40.h),
                         _buildYourReferralsTitle(),

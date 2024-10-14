@@ -50,91 +50,95 @@ class ReferralController extends GetxController {
     return referrals;
   }
 
-  Future<void> addReferral(String referralId) async {
-    try {
-      var userDoc = await _firestore.collection('users').doc(uid).get();
+Future<void> addReferral(String referralId) async {
+   var userDoc = await _firestore.collection('users').doc(uid).get();
+  if (referralUsed) {
+    Get.snackbar(
+      'Error',
+      'You have already used a referral code.',
+      snackPosition: SnackPosition.BOTTOM,
+    );
+    return;
+  }
 
-      if (userDoc.exists && referralUsed) {
-        Get.snackbar(
-          'Error',
-          'You have already used a referral code.',
-          snackPosition: SnackPosition.BOTTOM,
-        );
-        return;
-      }
+  try {
+    isLoading = true;
+    update(); // Update the UI to show loading state
 
-      var referrerDoc = await _firestore
+    // Check if the referral ID exists
+    var referrerDoc = await _firestore
+        .collection('users')
+        .where('referralId', isEqualTo: referralId)
+        .get();
+
+    if (referrerDoc.docs.isNotEmpty) {
+      String referrerUid = referrerDoc.docs.first.id;
+
+      // Update referrer's wallet
+      int currentWallet = referrerDoc.docs.first.data()['wallet'] ?? 0;
+      await _firestore.collection('users').doc(referrerUid).update({
+        'wallet': currentWallet + 50,
+      });
+
+      // Add current user to referrer's referrals
+      await _firestore
           .collection('users')
-          .where('referralId', isEqualTo: referralId)
-          .get();
-
-      if (referrerDoc.docs.isNotEmpty) {
-        String referrerUid = referrerDoc.docs.first.id;
-
-        // Get the current wallet balance or default to 0 if not present
-        int currentWallet = referrerDoc.docs.first.data()['wallet'] ?? 0;
-
-        // Update referrer's wallet
-        await _firestore.collection('users').doc(referrerUid).update({
-          'wallet': currentWallet + 50,
-        });
-
-        // Add current user to referrer's referrals
-        await _firestore
-            .collection('users')
-            .doc(referrerUid)
-            .collection('referrals')
-            .doc(uid)
-            .set({
-          'username': userDoc.data()?['username'] ?? 'Anonymous',
+          .doc(referrerUid)
+          .collection('referrals')
+          .doc(uid)
+          .set({
+         'username': userDoc.data()?['username'] ?? 'Anonymous',
           'email': userDoc.data()?['email'] ?? 'N/A',
-          'referredOn': DateTime.now(),
-        });
+        'referredOn': DateTime.now(),
+      });
 
-        // Handle the first referrer scenario
-        if (referrerDoc.docs.first.data().containsKey('referrerUid')) {
-          String firstReferrerUid = referrerDoc.docs.first['referrerUid'];
-          var firstReferrerDoc =
-              await _firestore.collection('users').doc(firstReferrerUid).get();
+      // Handle first referrer scenario (if applicable)
+      if (referrerDoc.docs.first.data().containsKey('referrerUid')) {
+        String firstReferrerUid = referrerDoc.docs.first['referrerUid'];
+        var firstReferrerDoc =
+            await _firestore.collection('users').doc(firstReferrerUid).get();
 
-          if (firstReferrerDoc.exists) {
-            int firstReferrerWallet =
-                firstReferrerDoc.data()?['wallet'] ?? 0;
+        if (firstReferrerDoc.exists) {
+          int firstReferrerWallet =
+              firstReferrerDoc.data()?['wallet'] ?? 0;
 
-            await _firestore.collection('users').doc(firstReferrerUid).update({
-              'wallet': firstReferrerWallet + 10,
-            });
-          }
+          await _firestore.collection('users').doc(firstReferrerUid).update({
+            'wallet': firstReferrerWallet + 10,
+          });
         }
-
-        // Mark referral as used for current user
-        await _firestore.collection('users').doc(uid).update({
-          'referralUsed': true,
-          'referrerUid': referrerUid,
-        });
-
-        await getReferrals();
-        update();
-
-        Get.snackbar(
-          'Success',
-          'Referral successfully added. ₹50 added to referrer’s wallet and ₹10 to their referrer.',
-          snackPosition: SnackPosition.BOTTOM,
-        );
-      } else {
-        Get.snackbar(
-          'Error',
-          'Invalid referral code. Please try again.',
-          snackPosition: SnackPosition.BOTTOM,
-        );
       }
-    } catch (e) {
-      print(e);
+
+      // Mark referral as used immediately
+      referralUsed = true;
+      await _firestore.collection('users').doc(uid).update({
+        'referralUsed': true,
+        'referrerUid': referrerUid,
+      });
+
+      await getReferrals();
+      Get.snackbar(
+        'Success',
+        'Referral successfully added. ₹50 added to referrer’s wallet and ₹10 to their referrer.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } else {
       Get.snackbar(
         'Error',
-        'An error occurred. Please try again later.',
+        'Invalid referral code. Please try again.',
         snackPosition: SnackPosition.BOTTOM,
       );
     }
+  } catch (e) {
+    print(e);
+    Get.snackbar(
+      'Error',
+      'An error occurred. Please try again later.',
+      snackPosition: SnackPosition.BOTTOM,
+    );
+  } finally {
+    isLoading = false;
+    update(); // Stop loading state
   }
+}
+
 }

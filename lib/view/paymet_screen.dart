@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mwave/controllers/auth_controller.dart';
 import 'package:mwave/view/bottumbar1.dart';
+import 'package:mwave/view/referal_screen.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class PaymentPage extends StatefulWidget {
@@ -141,7 +142,7 @@ void handlePaymentSuccessResponse(PaymentSuccessResponse response) async {
           icon: Icons.check,
         );
      // showAlertDialog(context, "Payment Successful", "Payment ID: ${response.paymentId}");
-      Get.offAll(BottumNavBar());
+      Get.offAll(ReferralScreen());
     } else {
        authController.showToast(context,
           text: '"Error", "No user is currently logged in."',
