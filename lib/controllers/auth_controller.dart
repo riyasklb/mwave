@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mwave/auth/otp_screen.dart';
+import 'package:mwave/onboardvideo/video_scree.dart';
 import 'package:mwave/view/bottumbar1.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -124,7 +125,7 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<void> checkUserByPhoneNumber(String phoneNumber) async {
+ Future<void> checkUserByPhoneNumber(String phoneNumber) async {
     try {
       QuerySnapshot querySnapshot = await _firestore
           .collection('users')

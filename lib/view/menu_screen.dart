@@ -5,6 +5,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mwave/view/profile_screen.dart';
 import 'package:mwave/view/refund_and_policy.dart';
+import 'package:mwave/view/share_referal_screen.dart';
 
 class MenuScreen extends StatelessWidget {
   const MenuScreen({super.key});
@@ -90,6 +91,8 @@ class MenuScreen extends StatelessWidget {
                   icon: Icons.share,
                   label: 'Share MoneyWave App',
                   onTap: () {
+                    // String referralCode = 'ABC123';
+                      Get.to(() => ShareReferralScreen());
                     // Add share functionality
                   },
                 ),

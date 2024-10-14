@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart'; // Firestore import
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mwave/controllers/auth_controller.dart';
 import 'package:mwave/view/bottumbar1.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
@@ -14,6 +16,23 @@ class PaymentPage extends StatefulWidget {
 }
 
 class _PaymentPageState extends State<PaymentPage> {
+  late Razorpay razorpay;
+ final AuthController authController = Get.put(AuthController());
+  @override
+  void initState() {
+    super.initState();
+    razorpay = Razorpay();
+    razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlePaymentErrorResponse);
+    razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccessResponse);
+    razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, handleExternalWalletSelected);
+  }
+
+  @override
+  void dispose() {
+    razorpay.clear(); // Dispose of Razorpay to avoid memory leaks
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +54,6 @@ class _PaymentPageState extends State<PaymentPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Display Payment Amount
             Text(
               'Amount to Pay:',
               style: GoogleFonts.poppins(
@@ -55,30 +73,10 @@ class _PaymentPageState extends State<PaymentPage> {
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 40.h),
-
-            // Payment Button
             ElevatedButton(
-              onPressed: () {
-                  Razorpay razorpay = Razorpay();
-                  var options = {
-                    'key': 'rzp_test_sWnFHSJbOds7ZX',
-                    'amount': 10000,
-                    'name': 'Acme Corp.',
-                    'description': 'Fine T-Shirt',
-                    'retry': {'enabled': true, 'max_count': 1},
-                    'send_sms_hash': true,
-                    'prefill': {'contact': '9633749714', 'email': 'test@razorpay.com'},
-                    'external': {
-                      'wallets': ['paytm']
-                    }
-                  };
-                  razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlePaymentErrorResponse);
-                  razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccessResponse);
-                  razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, handleExternalWalletSelected);
-                  razorpay.open(options);
-                },
+              onPressed: openPaymentGateway,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF6A00D7), // Button color
+                backgroundColor: const Color(0xFF6A00D7),
                 padding: EdgeInsets.symmetric(vertical: 14.h),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12.r),
@@ -99,91 +97,100 @@ class _PaymentPageState extends State<PaymentPage> {
     );
   }
 
-  // Function to simulate payment success/failure
-  void _showPaymentDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Payment Confirmation'),
-        content: const Text('Do you want to proceed with the payment of ₹100?'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              _showSuccessDialog(context);
-            },
-            child: const Text('Pay'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text('Cancel'),
-          ),
-        ],
-      ),
+  // Open Razorpay Payment Gateway
+  void openPaymentGateway() {
+    var options = {
+      'key': 'rzp_test_sWnFHSJbOds7ZX',
+      'amount': 10000, // Amount in paise (₹100 = 10000 paise)
+      'name': 'Acme Corp.',
+      'description': 'Fine T-Shirt',
+      'retry': {'enabled': true, 'max_count': 1},
+      'send_sms_hash': true,
+      'prefill': {'contact': '9633749714', 'email': 'test@razorpay.com'},
+      'external': {
+        'wallets': ['paytm']
+      }
+    };
+    razorpay.open(options);
+  }
+
+  // Handle Payment Success
+// Handle Payment Success
+void handlePaymentSuccessResponse(PaymentSuccessResponse response) async {
+  try {
+    // Get the current user's UID
+    var currentUser = FirebaseAuth.instance.currentUser;
+
+    if (currentUser != null) {
+      String uid = currentUser.uid;
+
+      // Store payment details in the current user's Firestore document
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid) // User's UID
+          .collection('payments') // Subcollection for payments
+          .add({
+        'orderId': response.orderId,
+        'paymentId': response.paymentId,
+        'signature': response.signature,
+        'amount': 100, // Amount in INR
+        'timestamp': Timestamp.now(), // Current timestamp
+      });
+  authController.showToast(context,
+          text: 'Payment Successful", "Payment ID: ${response.paymentId}',
+          icon: Icons.check,
+        );
+     // showAlertDialog(context, "Payment Successful", "Payment ID: ${response.paymentId}");
+      Get.offAll(BottumNavBar());
+    } else {
+       authController.showToast(context,
+          text: '"Error", "No user is currently logged in."',
+          icon: Icons.error,
+        );
+    //  showAlertDialog(context, "Error", "No user is currently logged in.");
+    }
+  } catch (e) {
+    print('Error storing payment details: $e');
+    showAlertDialog(context, "Error", "Failed to store payment details.");
+  }
+}
+
+  // Handle Payment Error
+  void handlePaymentErrorResponse(PaymentFailureResponse response) {
+
+    authController.showToast(context,
+          text: 'Payment Failed',
+          icon: Icons.error,
+        );
+    showAlertDialog(
+      context,
+      "Payment Failed",
+      "Code: ${response.code}\nDescription: ${response.message}\nMetadata: ${response.error.toString()}",
     );
   }
 
-  // Function to display payment success message
-  void _showSuccessDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Payment Successful'),
-        content: const Text('You have successfully paid ₹100.'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
-    void handlePaymentErrorResponse(PaymentFailureResponse response){
-    /*
-    * PaymentFailureResponse contains three values:
-    * 1. Error Code
-    * 2. Error Description
-    * 3. Metadata
-    * */
-    showAlertDialog(context, "Payment Failed", "Code: ${response.code}\nDescription: ${response.message}\nMetadata:${response.error.toString()}");
-  }
-
-  void handlePaymentSuccessResponse(PaymentSuccessResponse response){
-    /*
-    * Payment Success Response contains three values:
-    * 1. Order ID
-    * 2. Payment ID
-    * 3. Signature
-    * */
-    Get.offAll(BottumNavBar());
-    showAlertDialog(context, "Payment Successful", "Payment ID: ${response.paymentId}");
-  }
-
-  void handleExternalWalletSelected(ExternalWalletResponse response){
+  // Handle External Wallet Selection
+  void handleExternalWalletSelected(ExternalWalletResponse response) {
     showAlertDialog(context, "External Wallet Selected", "${response.walletName}");
   }
 
-  void showAlertDialog(BuildContext context, String title, String message){
-    // set up the buttons
-    Widget continueButton = ElevatedButton(
-      child: const Text("Continue"),
-      onPressed:  () {},
-    );
-    // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
-      title: Text(title),
-      content: Text(message),
-    );
-    // show the dialog
+  // Show Alert Dialog
+  void showAlertDialog(BuildContext context, String title, String message) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return alert;
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: [
+            ElevatedButton(
+              child: const Text("Continue"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
       },
     );
   }

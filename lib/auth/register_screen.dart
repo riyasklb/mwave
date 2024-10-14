@@ -129,7 +129,7 @@ void _sendOtp() async {
 
       await _auth.signInWithCredential(credential);
       await _saveUserToFirestore();
-     Get.offAll( BottumNavBar());
+     Get.offAll( VideoSelectionScreen());
     } catch (e) {
       setState(() {
         _isLoading = false;
