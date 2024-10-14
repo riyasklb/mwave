@@ -37,7 +37,7 @@ class _BottumNavBarState extends State<BottumNavBar> {
     final List<Widget> bottomBarPages = [
       HomeScreen(),
       const HistoryScreeen(),
-       ReferralScreen(),
+       ReferralScreen(navigateToBottomNavBar: false,),
        WalletScreen(),
       const MenuScreen(),
     ];

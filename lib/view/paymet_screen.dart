@@ -142,7 +142,7 @@ void handlePaymentSuccessResponse(PaymentSuccessResponse response) async {
           icon: Icons.check,
         );
      // showAlertDialog(context, "Payment Successful", "Payment ID: ${response.paymentId}");
-      Get.offAll(ReferralScreen());
+      Get.offAll(ReferralScreen(navigateToBottomNavBar: true,));
     } else {
        authController.showToast(context,
           text: '"Error", "No user is currently logged in."',

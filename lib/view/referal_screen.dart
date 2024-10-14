@@ -5,25 +5,30 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mwave/constants/colors.dart';
 import 'package:mwave/controllers/referal_controller.dart';
 import 'package:mwave/model/referal_model.dart';
+import 'package:mwave/view/bottumbar1.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class ReferralScreen extends StatelessWidget {
   final TextEditingController _referralCodeController = TextEditingController();
   final ReferralController controller = Get.put(ReferralController());
 
+  /// **Flag to determine where to navigate after submission**
+  final bool navigateToBottomNavBar;
+
+  ReferralScreen({Key? key, required this.navigateToBottomNavBar})
+      : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          // Background Image
           Positioned.fill(
             child: Image.asset(
-              custombagroundimage, // Add your background image path
+              custombagroundimage,
               fit: BoxFit.cover,
             ),
           ),
-          // Foreground content
           Positioned.fill(
             child: Container(
               padding: EdgeInsets.all(24.0.sp),
@@ -33,9 +38,7 @@ class ReferralScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        
                         if (!controller.referralUsed)
-                         // Only show if referral not used
                           _buildReferralInput(controller),
                         SizedBox(height: 40.h),
                         _buildYourReferralsTitle(),
@@ -48,20 +51,6 @@ class ReferralScreen extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildAppBar() {
-    return AppBar(
-      backgroundColor: Colors.transparent,
-      title: Text(
-        'Add Referral Code',
-        style: GoogleFonts.poppins(
-          fontSize: 20.sp,
-          fontWeight: FontWeight.w600,
-          color: kwhite,
-        ),
       ),
     );
   }
@@ -100,32 +89,42 @@ class ReferralScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSubmitButton(ReferralController controller) {
-    return Center(
-      child: ElevatedButton(
-        onPressed: () {
-          if (controller.isLoading) return;
+Widget _buildSubmitButton(ReferralController controller) {
+  return Center(
+    child: ElevatedButton(
+      onPressed: () async {
+        if (controller.isLoading) return;
 
-          String referralId = _referralCodeController.text.trim();
-          if (referralId.isEmpty) {
-            Get.snackbar('Error', 'Please enter a referral code.',
-                snackPosition: SnackPosition.BOTTOM);
-          } else {
-            controller.addReferral(referralId);
+        String referralId = _referralCodeController.text.trim();
+        if (referralId.isEmpty) {
+          Get.snackbar(
+            'Error',
+            'Please enter a referral code.',
+            snackPosition: SnackPosition.BOTTOM,
+          );
+        } else {
+          // Call the function without expecting a value
+          await controller.addReferral(referralId);
+
+          // Check referralUsed state and navigate if needed
+          if (controller.referralUsed) {
+            Get.offAll(BottumNavBar()); // Navigate to the bottom navbar screen
           }
-        },
-        child: controller.isLoading
-            ? CircularProgressIndicator(color: Colors.white)
-            : Text('Submit', style: TextStyle(fontSize: 16.sp)),
-        style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.symmetric(horizontal: 32.sp, vertical: 12.sp),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30.sp),
-          ),
+        }
+      },
+      child: controller.isLoading
+          ? CircularProgressIndicator(color: Colors.white)
+          : Text('Submit', style: TextStyle(fontSize: 16.sp)),
+      style: ElevatedButton.styleFrom(
+        padding: EdgeInsets.symmetric(horizontal: 32.sp, vertical: 12.sp),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30.sp),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   Widget _buildYourReferralsTitle() {
     return Column(
