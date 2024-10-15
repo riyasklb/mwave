@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -23,29 +24,41 @@ class _ShareReferralScreenState extends State<ShareReferralScreen> {
     fetchReferralCode();
   }
 
-  Future<void> fetchReferralCode() async {
-    try {
-      // Fetch the referralId field from the 'users' collection
-      var querySnapshot = await FirebaseFirestore.instance.collection('users').get();
 
-      if (querySnapshot.docs.isNotEmpty) {
-        setState(() {
-          referralCode = querySnapshot.docs.first['referralId']; // Fetch the first doc's referralId
-          isLoading = false;
-        });
-      } else {
-        setState(() {
-          referralCode = 'No Referral Code Available';
-          isLoading = false;
-        });
-      }
-    } catch (e) {
+
+Future<void> fetchReferralCode() async {
+  try {
+    // Get the current user ID
+    String? userId = FirebaseAuth.instance.currentUser?.uid;
+
+    if (userId == null) {
+      throw Exception('User not logged in');
+    }
+
+    // Fetch the referralId for the logged-in user
+    var documentSnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .get();
+
+    if (documentSnapshot.exists) {
       setState(() {
+        referralCode = documentSnapshot['referralId'] ?? 'No Referral Code';
         isLoading = false;
       });
-      print('Error fetching referral code: $e');
+    } else {
+      setState(() {
+        referralCode = 'No Referral Code Available';
+        isLoading = false;
+      });
     }
+  } catch (e) {
+    setState(() {
+      isLoading = false;
+    });
+    print('Error fetching referral code: $e');
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +120,7 @@ class _ShareReferralScreenState extends State<ShareReferralScreen> {
           Text(
             referralCode,
             style: GoogleFonts.poppins(
-              fontSize: 20.sp,
+              fontSize: 15.sp,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -129,7 +142,7 @@ class _ShareReferralScreenState extends State<ShareReferralScreen> {
           icon: Icon(Icons.share),
           label: Text('Share Code'),
           onPressed: () {
-            Share.share('Use my referral code: $referralCode to get started!');
+            Share.share('$referralCode');
           },
           style: ElevatedButton.styleFrom(
             padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 12.h),

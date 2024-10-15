@@ -16,97 +16,70 @@ class _VideoSelectionScreenState extends State<VideoSelectionScreen> {
   late VideoPlayerController _controller1;
   late VideoPlayerController _controller2;
   late VideoPlayerController _controller3;
+
   bool _isVideo1Watched = false;
   bool _isVideo2Watched = false;
   bool _isVideo3Watched = false;
+
   int _currentVideoIndex = 1;
   String _selectedLanguage = 'en'; // Default language
+
+  bool _isInitialized = false; // New flag to track initialization
 
   @override
   void initState() {
     super.initState();
-
-    setDefault();
+    _initializeControllers();
   }
 
-  setDefault() async {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
- 
+  Future<void> _initializeControllers() async {
+    // Initialize all controllers asynchronously
+    _controller1 = VideoPlayerController.asset('assets/images/viddeo1.mp4')
+      ..addListener(_checkVideo1Status);
 
-      _controller1 = VideoPlayerController.asset('assets/images/viddeo1.mp4')
-        ..initialize().then((_) => setState(() {}))
-        ..addListener(() {
-          if (_controller1.value.position == _controller1.value.duration) {
-            setState(() {
-              _isVideo1Watched = true;
-            });
-          }
-        });
+    _controller2 = VideoPlayerController.asset('assets/images/vedio2.mp4')
+      ..addListener(_checkVideo2Status);
 
-      _controller2 = VideoPlayerController.asset('assets/images/vedio2.mp4')
-        ..initialize().then((_) => setState(() {}))
-        ..addListener(() {
-          if (_controller2.value.position == _controller2.value.duration) {
-            setState(() {
-              _isVideo2Watched = true;
-            });
-          }
-        });
+    _controller3 = VideoPlayerController.asset('assets/images/video3.MP4')
+      ..addListener(_checkVideo3Status);
 
-      _controller3 = VideoPlayerController.asset('assets/images/video3.MP4')
-        ..initialize().then((_) => setState(() {}))
-        ..addListener(() {
-          if (_controller3.value.position == _controller3.value.duration) {
-            setState(() {
-              _isVideo3Watched = true;
-            });
-          }
-        });
-          _showLanguageSelectionDialog();
+    // Wait for all controllers to initialize
+    await Future.wait([
+      _controller1.initialize(),
+      _controller2.initialize(),
+      _controller3.initialize(),
+    ]);
+
+    // Ensure the UI updates after initialization
+    setState(() {
+      _isInitialized = true;
     });
+
+    _showLanguageSelectionDialog();
   }
 
-  void _showLanguageSelectionDialog() {
-    // Show a dialog asking for the language
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Select Language'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                title: Text('English'),
-                leading: Radio<String>(
-                  value: 'en',
-                  groupValue: _selectedLanguage,
-                  onChanged: (String? value) {
-                    setState(() {
-                      _selectedLanguage = value!;
-                      Navigator.of(context).pop();
-                    });
-                  },
-                ),
-              ),
-              ListTile(
-                title: Text('Tamil'),
-                leading: Radio<String>(
-                  value: 'ta',
-                  groupValue: _selectedLanguage,
-                  onChanged: (String? value) {
-                    setState(() {
-                      _selectedLanguage = value!;
-                      Navigator.of(context).pop();
-                    });
-                  },
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
+  void _checkVideo1Status() {
+    if (_controller1.value.position == _controller1.value.duration) {
+      setState(() {
+        _isVideo1Watched = true;
+      });
+    }
+  }
+
+  void _checkVideo2Status() {
+    if (_controller2.value.position == _controller2.value.duration) {
+      setState(() {
+        _isVideo2Watched = true;
+      });
+    }
+  }
+
+  void _checkVideo3Status() {
+    if (_controller3.value.position == _controller3.value.duration) {
+      setState(() {
+        _isVideo3Watched = true;
+      });
+    }
   }
 
   @override
@@ -117,16 +90,56 @@ class _VideoSelectionScreenState extends State<VideoSelectionScreen> {
     super.dispose();
   }
 
+  void _showLanguageSelectionDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Select Language'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildLanguageOption('English', 'en'),
+              _buildLanguageOption('Tamil', 'ta'),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  ListTile _buildLanguageOption(String title, String value) {
+    return ListTile(
+      title: Text(title),
+      leading: Radio<String>(
+        value: value,
+        groupValue: _selectedLanguage,
+        onChanged: (String? newValue) {
+          setState(() {
+            _selectedLanguage = newValue!;
+            Navigator.of(context).pop();
+          });
+        },
+      ),
+    );
+  }
+
   void _onQuizSubmitted(int videoNumber) {
     setState(() {
-      if (videoNumber == 1) {
-        _currentVideoIndex = 2;
-      } else if (videoNumber == 2) {
-        _currentVideoIndex = 3;
-      } else if (videoNumber == 3) {
-        Get.to(PaymentPage());
-      }
+      _currentVideoIndex = videoNumber + 1;
     });
+
+    if (videoNumber == 3) {
+      Get.to(QuizScreen(
+        videoNumber: videoNumber,
+        language: _selectedLanguage,
+      ));
+    } else {
+      Get.to(QuizScreen(
+        videoNumber: videoNumber,
+        language: _selectedLanguage,
+      ));
+    }
   }
 
   Widget buildVideoPlayer(VideoPlayerController controller) {
@@ -140,11 +153,18 @@ class _VideoSelectionScreenState extends State<VideoSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_isInitialized) {
+      return Scaffold(
+        backgroundColor: kwhite,
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       backgroundColor: kwhite,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor:  kblue,
+        backgroundColor: kblue,
         title: Text(
           _selectedLanguage == 'en' ? 'Videos' : 'வீடியோக்கள்',
           style: GoogleFonts.lato(
@@ -209,18 +229,9 @@ class _VideoSelectionScreenState extends State<VideoSelectionScreen> {
                 });
               },
             ),
-            if (isWatched) ...[
-              SizedBox(height: 10),
+            if (isWatched)
               ElevatedButton(
-                onPressed: () {
-                  _onQuizSubmitted(videoNumber);
-                  Get.to(
-                    QuizScreen(
-                      videoNumber: videoNumber,
-                      language: _selectedLanguage,
-                    ),
-                  );
-                },
+                onPressed: () => _onQuizSubmitted(videoNumber),
                 child: Text(_selectedLanguage == 'en'
                     ? 'Take Quiz for Video $videoNumber'
                     : 'வீடியோ $videoNumber க்கான வினாடி வினா எடுக்கவும்'),
@@ -233,7 +244,6 @@ class _VideoSelectionScreenState extends State<VideoSelectionScreen> {
                   ),
                 ),
               ),
-            ],
           ],
         ),
       ),

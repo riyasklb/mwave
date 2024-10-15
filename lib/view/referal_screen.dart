@@ -38,6 +38,26 @@ class ReferralScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        navigateToBottomNavBar == true
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Get.offAll(() => BottumNavBar());
+                                    },
+                                    child: Text(
+                                      'Skip',
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 16.sp,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : Text(''),
                         if (!controller.referralUsed)
                           _buildReferralInput(controller),
                         SizedBox(height: 40.h),
@@ -89,42 +109,39 @@ class ReferralScreen extends StatelessWidget {
     );
   }
 
-Widget _buildSubmitButton(ReferralController controller) {
-  return Center(
-    child: ElevatedButton(
-      onPressed: () async {
-        if (controller.isLoading) return;
+  Widget _buildSubmitButton(ReferralController controller) {
+    return Center(
+      child: ElevatedButton(
+        onPressed: () async {
+          if (controller.isLoading) return;
 
-        String referralId = _referralCodeController.text.trim();
-        if (referralId.isEmpty) {
-          Get.snackbar(
-            'Error',
-            'Please enter a referral code.',
-            snackPosition: SnackPosition.BOTTOM,
-          );
-        } else {
-          // Call the function without expecting a value
-          await controller.addReferral(referralId);
+          String referralId = _referralCodeController.text.trim();
+          if (referralId.isEmpty) {
+            Get.snackbar(
+              'Error',
+              'Please enter a referral code.',
+              snackPosition: SnackPosition.BOTTOM,
+            );
+          } else {
+            await controller.addReferral(referralId);
 
-          // Check referralUsed state and navigate if needed
-          if (controller.referralUsed) {
-            Get.offAll(BottumNavBar()); // Navigate to the bottom navbar screen
+            if (controller.referralUsed) {
+              Get.offAll(() => BottumNavBar());
+            }
           }
-        }
-      },
-      child: controller.isLoading
-          ? CircularProgressIndicator(color: Colors.white)
-          : Text('Submit', style: TextStyle(fontSize: 16.sp)),
-      style: ElevatedButton.styleFrom(
-        padding: EdgeInsets.symmetric(horizontal: 32.sp, vertical: 12.sp),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30.sp),
+        },
+        child: controller.isLoading
+            ? CircularProgressIndicator(color: Colors.white)
+            : Text('Submit', style: TextStyle(fontSize: 16.sp)),
+        style: ElevatedButton.styleFrom(
+          padding: EdgeInsets.symmetric(horizontal: 32.sp, vertical: 12.sp),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30.sp),
+          ),
         ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 
   Widget _buildYourReferralsTitle() {
     return Column(
