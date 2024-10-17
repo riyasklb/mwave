@@ -56,7 +56,7 @@ Future<void> addReferral(String referralId) async {
     Get.snackbar(
       'Error',
       'You have already used a referral code.',
-      snackPosition: SnackPosition.BOTTOM,
+      snackPosition: SnackPosition.TOP,
     );
     return;
   }

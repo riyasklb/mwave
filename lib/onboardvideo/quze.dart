@@ -1,59 +1,67 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mwave/constants/colors.dart';
 import 'package:mwave/constants/localisation.dart';
 import 'package:mwave/view/paymet_screen.dart';
 
 class QuizScreen extends StatefulWidget {
   final int videoNumber;
-  final String language; // Pass the language code (e.g., 'en' or 'ta')
+  final String language;
 
-  const QuizScreen(
-      {Key? key, required this.videoNumber, required this.language})
-      : super(key: key);
+  const QuizScreen({
+    Key? key,
+    required this.videoNumber,
+    required this.language,
+  }) : super(key: key);
 
   @override
   _QuizScreenState createState() => _QuizScreenState();
 }
 
 class _QuizScreenState extends State<QuizScreen> {
-  final List<int> _selectedAnswers = [0, 0, 0, 0, 0, 0]; // 5 questions
+  final List<int> _selectedAnswers = [0, 0, 0, 0, 0, 0];
   bool _isSubmitted = false;
 
-  // Correct answers mapping
   final Map<int, int> _correctAnswers = {
     0: 1,
-    1: 1, // Correct answer for Q2
-    2: 1, // Correct answer for Q3
-    3: 0, // Correct answer for Q4
-    4: 0, // Correct answer for Q5
+    1: 1,
+    2: 1,
+    3: 0,
+    4: 0,
   };
 
-  // Track whether the correct answer is blinking
   List<bool> _isCorrectBlinking = [false, false, false, false, false];
   List<bool> _isWrongBlinking = [false, false, false, false, false];
 
   @override
   Widget build(BuildContext context) {
-    // Define the questions and options based on the video number
+    ScreenUtil.init(context, designSize: const Size(500, 800)); // Responsive design
     List<Map<String, dynamic>> questions = _getQuestions(widget.videoNumber);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Quiz for Video ${widget.videoNumber}'),
-      ),
+      // appBar: AppBar(
+      //   title: Text(
+      //     'Quiz for Video ${widget.videoNumber}',
+      //     style: GoogleFonts.roboto(fontSize: 22.sp),
+      //   ),
+      // ),
       body: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: EdgeInsets.all(20.w),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+            children: [kheight40,
               Text(
                 'Quiz for Video ${widget.videoNumber}',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: GoogleFonts.poppins(
+                  fontSize: 28.sp,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 20.h),
 
-              // Build questions dynamically
               for (int i = 0; i < questions.length; i++)
                 _buildQuestionCard(
                   question: questions[i]['question'],
@@ -63,42 +71,17 @@ class _QuizScreenState extends State<QuizScreen> {
                   isWrongBlinking: _isWrongBlinking[i],
                 ),
 
-              SizedBox(height: 30),
+              SizedBox(height: 30.h),
 
-              // Show Submit button or Next Video button based on submission state
-              if (!_isSubmitted) ...[
-                Center(
-                  child: ElevatedButton(
-                    onPressed: _submitQuiz,
-                    child: Text('Submit Quiz'),
-                  ),
+              if (!_isSubmitted)
+                _buildButton('Submit Quiz', _submitQuiz),
+              if (_isSubmitted && widget.videoNumber < 3)
+                _buildButton('Next Video', () => Get.back()),
+              if (_isSubmitted && widget.videoNumber == 3)
+                _buildButton(
+                  'Go to Payment Screen',
+                  () => Get.offAll(PaymentPage()),
                 ),
-              ] else if (widget.videoNumber < 3) ...[
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // Navigate to the next video
-                      Get.back(); // Load next video quiz
-                    },
-                    child: Text('Next Video'),
-                  ),
-                ),
-              ],
-
-              // Show "Go to Home Screen" button only for Video 3
-              if (_isSubmitted && widget.videoNumber == 3) ...[
-                SizedBox(height: 20),
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // Navigate to Home Screen
-                      Get.offAll(
-                          PaymentPage()); // Assuming you have a HomeScreen widget
-                    },
-                    child: Text('Go to Payment Screen'),
-                  ),
-                ),
-              ],
             ],
           ),
         ),
@@ -106,10 +89,28 @@ class _QuizScreenState extends State<QuizScreen> {
     );
   }
 
+  Widget _buildButton(String text, VoidCallback onPressed) {
+    return Center(
+      child: SizedBox(
+      
+  width: double.infinity,
+        height: 50.h,        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+            textStyle: GoogleFonts.poppins(fontSize: 20.sp),
+          ),
+          onPressed: onPressed,
+          child: Text(text),
+        ),
+      ),
+    );
+  }
+
   List<Map<String, dynamic>> _getQuestions(int videoNumber) {
-    List<Map<String, dynamic>> questions = [];
     if (videoNumber == 1) {
-      questions = [
+      return [
         {
           'question': Localization.getString('question1', widget.language),
           'options': [
@@ -127,7 +128,7 @@ class _QuizScreenState extends State<QuizScreen> {
         },
       ];
     } else if (videoNumber == 2) {
-      questions = [
+      return [
         {
           'question': Localization.getString('question5', widget.language),
           'options': [
@@ -136,17 +137,9 @@ class _QuizScreenState extends State<QuizScreen> {
             Localization.getString('optionN', widget.language),
           ],
         },
-        {
-          'question': Localization.getString('question4', widget.language),
-          'options': [
-            Localization.getString('optionI', widget.language),
-            Localization.getString('optionJ', widget.language),
-            Localization.getString('optionK', widget.language),
-          ],
-        },
       ];
-    } else if (videoNumber == 3) {
-      questions = [
+    } else {
+      return [
         {
           'question': Localization.getString('question3', widget.language),
           'options': [
@@ -157,7 +150,6 @@ class _QuizScreenState extends State<QuizScreen> {
         },
       ];
     }
-    return questions;
   }
 
   void _submitQuiz() {
@@ -166,11 +158,11 @@ class _QuizScreenState extends State<QuizScreen> {
 
       for (int i = 0; i < _selectedAnswers.length; i++) {
         if (_selectedAnswers[i] == _correctAnswers[i + 1]) {
-          _isCorrectBlinking[i] = true; // Correct answer selected
-          _blinkCorrectAnswer(i); // Start blinking effect for correct answer
+          _isCorrectBlinking[i] = true;
+          _blinkCorrectAnswer(i);
         } else {
-          _isWrongBlinking[i] = true; // Wrong answer selected
-          _blinkWrongAnswer(i); // Start blinking effect for wrong answer
+          _isWrongBlinking[i] = true;
+          _blinkWrongAnswer(i);
         }
       }
     });
@@ -179,7 +171,7 @@ class _QuizScreenState extends State<QuizScreen> {
   void _blinkCorrectAnswer(int index) {
     Future.delayed(Duration(milliseconds: 500), () {
       setState(() {
-        _isCorrectBlinking[index] = false; // Stop blinking after some time
+        _isCorrectBlinking[index] = false;
       });
     });
   }
@@ -187,7 +179,7 @@ class _QuizScreenState extends State<QuizScreen> {
   void _blinkWrongAnswer(int index) {
     Future.delayed(Duration(milliseconds: 500), () {
       setState(() {
-        _isWrongBlinking[index] = false; // Stop blinking after some time
+        _isWrongBlinking[index] = false;
       });
     });
   }
@@ -201,24 +193,30 @@ class _QuizScreenState extends State<QuizScreen> {
   }) {
     return Card(
       elevation: 5,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.r),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(16.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               question,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: GoogleFonts.roboto(
+                fontSize: 18.sp,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 10.h),
             for (int j = 0; j < options.length; j++)
               AnimatedContainer(
                 duration: Duration(milliseconds: 300),
                 color: _getAnswerColor(
                     j, questionNumber - 1, isCorrectBlinking, isWrongBlinking),
                 child: RadioListTile<int>(
-                  title: Text(options[j]),
-                  value: j, // Option index as value
+                  title: Text(options[j], style: GoogleFonts.poppins()),
+                  value: j,
                   groupValue: _selectedAnswers[questionNumber - 1],
                   onChanged: (value) {
                     setState(() {
@@ -235,26 +233,22 @@ class _QuizScreenState extends State<QuizScreen> {
 
   Color _getAnswerColor(int optionIndex, int questionIndex,
       bool isCorrectBlinking, bool isWrongBlinking) {
-    // Check if the answer is submitted
     if (_isSubmitted) {
       if (optionIndex == _correctAnswers[questionIndex + 1]) {
-        return Colors.green
-            .withOpacity(0.5); // Correct answer highlighted green
+        return Colors.green.withOpacity(0.5);
       } else if (optionIndex == _selectedAnswers[questionIndex]) {
-        return Colors.red
-            .withOpacity(0.5); // Selected wrong answer highlighted red
+        return Colors.red.withOpacity(0.5);
       }
     }
 
-    // Check blinking effect
     if (isCorrectBlinking &&
         optionIndex == _correctAnswers[questionIndex + 1]) {
-      return Colors.green.withOpacity(0.5); // Correct answer blinking green
+      return Colors.green.withOpacity(0.5);
     } else if (isWrongBlinking &&
         optionIndex == _selectedAnswers[questionIndex]) {
-      return Colors.red.withOpacity(0.5); // Wrong answer blinking red
+      return Colors.red.withOpacity(0.5);
     }
 
-    return Colors.transparent; // Default color
+    return Colors.transparent;
   }
 }

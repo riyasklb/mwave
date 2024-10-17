@@ -13,9 +13,9 @@ class ReferralScreen extends StatelessWidget {
   final ReferralController controller = Get.put(ReferralController());
 
   /// **Flag to determine where to navigate after submission**
-  final bool navigateToBottomNavBar;
+ 
 
-  ReferralScreen({Key? key, required this.navigateToBottomNavBar})
+  ReferralScreen({Key? key,})
       : super(key: key);
 
   @override
@@ -37,32 +37,36 @@ class ReferralScreen extends StatelessWidget {
                   return SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        navigateToBottomNavBar == true
-                            ? Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Get.offAll(() => BottumNavBar());
-                                    },
-                                    child: Text(
-                                      'Skip',
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 16.sp,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w600,
+                      children: [kheight40,
+                        
+                             InkWell(onTap:() {
+                                        Get.offAll(() => BottumNavBar());
+                                      },
+                              child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    TextButton(
+                                      onPressed: () {
+                                      //  Get.offAll(() => BottumNavBar());
+                                      },
+                                      child: Text(
+                                        'Skip',
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 16.sp,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              )
-                            : Text(''),
-                        if (!controller.referralUsed)
+                              Icon(Icons.arrow_forward,color: kwhite,)    ],
+                                ),
+                            ),
+                           
+                    //    if (!controller.referralUsed)
                           _buildReferralInput(controller),
                         SizedBox(height: 40.h),
-                        _buildYourReferralsTitle(),
-                        _buildReferralList(controller),
+                       // _buildYourReferralsTitle(),
+                     //   _buildReferralList(controller),
                       ],
                     ),
                   );
@@ -111,99 +115,102 @@ class ReferralScreen extends StatelessWidget {
 
   Widget _buildSubmitButton(ReferralController controller) {
     return Center(
-      child: ElevatedButton(
-        onPressed: () async {
-          if (controller.isLoading) return;
-
-          String referralId = _referralCodeController.text.trim();
-          if (referralId.isEmpty) {
-            Get.snackbar(
-              'Error',
-              'Please enter a referral code.',
-              snackPosition: SnackPosition.BOTTOM,
-            );
-          } else {
-            await controller.addReferral(referralId);
-
-            if (controller.referralUsed) {
-              Get.offAll(() => BottumNavBar());
+      child: SizedBox(  width: double.infinity,
+        height: 50.h,
+        child: ElevatedButton(
+          onPressed: () async {
+            if (controller.isLoading) return;
+        
+            String referralId = _referralCodeController.text.trim();
+            if (referralId.isEmpty) {
+              Get.snackbar(
+                'Error',
+                'Please enter a referral code.',
+                snackPosition: SnackPosition.TOP,
+              );
+            } else {
+              await controller.addReferral(referralId);
+        
+              if (controller.referralUsed) {
+                Get.offAll(() => BottumNavBar());
+              }
             }
-          }
-        },
-        child: controller.isLoading
-            ? CircularProgressIndicator(color: Colors.white)
-            : Text('Submit', style: TextStyle(fontSize: 16.sp)),
-        style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.symmetric(horizontal: 32.sp, vertical: 12.sp),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30.sp),
+          },
+          child: controller.isLoading
+              ? CircularProgressIndicator(color: Colors.white)
+              : Text('Submit', style: TextStyle(fontSize: 16.sp)),
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+            textStyle: GoogleFonts.poppins(fontSize: 22.sp),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildYourReferralsTitle() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(height: 40.h),
-        Text(
-          'Your Referrals',
-          style: GoogleFonts.poppins(
-            fontSize: 24.sp,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
-        ),
-        SizedBox(height: 16.h),
-      ],
-    );
-  }
+  // Widget _buildYourReferralsTitle() {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       SizedBox(height: 40.h),
+  //       Text(
+  //         'Your Referrals',
+  //         style: GoogleFonts.poppins(
+  //           fontSize: 24.sp,
+  //           fontWeight: FontWeight.w600,
+  //           color: Colors.white,
+  //         ),
+  //       ),
+  //       SizedBox(height: 16.h),
+  //     ],
+  //   );
+  // }
 
-  Widget _buildReferralList(ReferralController controller) {
-    return FutureBuilder<List<Referral>>(
-      future: controller.getReferrals(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Column(
-            children: [
-              SizedBox(height: 10.h),
-              Skeletonizer(
-                child: Card(
-                  child: Container(
-                    height: 60.h,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: kwhite,
-                      borderRadius: BorderRadius.circular(8.sp),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          );
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-          return ListView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: snapshot.data!.length,
-            itemBuilder: (context, index) {
-              final referral = snapshot.data![index];
-              return Card(
-                child: ListTile(
-                  title: Text(referral.username),
-                  subtitle: Text(referral.email),
-                ),
-              );
-            },
-          );
-        } else {
-          return Text('No referrals yet.');
-        }
-      },
-    );
-  }
+  // Widget _buildReferralList(ReferralController controller) {
+  //   return FutureBuilder<List<Referral>>(
+  //     future: controller.getReferrals(),
+  //     builder: (context, snapshot) {
+  //       if (snapshot.connectionState == ConnectionState.waiting) {
+  //         return Column(
+  //           children: [
+  //             SizedBox(height: 10.h),
+  //             Skeletonizer(
+  //               child: Card(
+  //                 child: Container(
+  //                   height: 60.h,
+  //                   width: double.infinity,
+  //                   decoration: BoxDecoration(
+  //                     color: kwhite,
+  //                     borderRadius: BorderRadius.circular(8.sp),
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //           ],
+  //         );
+  //       } else if (snapshot.hasError) {
+  //         return Text('Error: ${snapshot.error}');
+  //       } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+  //         return ListView.builder(
+  //           shrinkWrap: true,
+  //           physics: NeverScrollableScrollPhysics(),
+  //           itemCount: snapshot.data!.length,
+  //           itemBuilder: (context, index) {
+  //             final referral = snapshot.data![index];
+  //             return Card(
+  //               child: ListTile(
+  //                 title: Text(referral.username),
+  //                 subtitle: Text(referral.email),
+  //               ),
+  //             );
+  //           },
+  //         );
+  //       } else {
+  //         return Text('No referrals yet.');
+  //       }
+  //     },
+  //   );
+  // }
 }

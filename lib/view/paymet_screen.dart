@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mwave/constants/colors.dart';
 import 'package:mwave/controllers/auth_controller.dart';
-import 'package:mwave/view/bottumbar1.dart';
+
 import 'package:mwave/view/referal_screen.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
@@ -38,7 +39,7 @@ class _PaymentPageState extends State<PaymentPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF6A00D7),
+        backgroundColor: kblue,
         title: Text(
           'Payment',
           style: GoogleFonts.lato(
@@ -77,7 +78,7 @@ class _PaymentPageState extends State<PaymentPage> {
             ElevatedButton(
               onPressed: openPaymentGateway,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF6A00D7),
+                backgroundColor:kblue,
                 padding: EdgeInsets.symmetric(vertical: 14.h),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12.r),
@@ -142,7 +143,7 @@ void handlePaymentSuccessResponse(PaymentSuccessResponse response) async {
           icon: Icons.check,
         );
      // showAlertDialog(context, "Payment Successful", "Payment ID: ${response.paymentId}");
-      Get.offAll(ReferralScreen(navigateToBottomNavBar: true,));
+      Get.offAll(ReferralScreen());
     } else {
        authController.showToast(context,
           text: '"Error", "No user is currently logged in."',

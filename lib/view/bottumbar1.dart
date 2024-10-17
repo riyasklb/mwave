@@ -6,6 +6,7 @@ import 'package:mwave/view/home_screen.dart';
 import 'package:mwave/view/history_screeen.dart';
 import 'package:mwave/view/menu_screen.dart';
 import 'package:mwave/view/referal_screen.dart';
+import 'package:mwave/view/referals.dart';
 import 'package:mwave/view/wallet_screen.dart';
 
 class BottumNavBar extends StatefulWidget {
@@ -37,7 +38,7 @@ class _BottumNavBarState extends State<BottumNavBar> {
     final List<Widget> bottomBarPages = [
       HomeScreen(),
       const HistoryScreeen(),
-       ReferralScreen(navigateToBottomNavBar: false,),
+       MyReferalsScreen(),
        WalletScreen(),
       const MenuScreen(),
     ];
