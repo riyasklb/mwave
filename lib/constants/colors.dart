@@ -21,5 +21,5 @@ SizedBox kheight10 = SizedBox(
   height: 10,
 );
 // A sample base64 string of an image (replace this with your actual base64 string)
-const String custombagroundimage = 'assets/images/pixelcut-export 3(1).jpeg';
+const String custombagroundimage = 'assets/images/WhatsApp Image 2024-10-17 at 2.25.11 PM.jpeg';
 Image bagroundimage = Image.asset(custombagroundimage);

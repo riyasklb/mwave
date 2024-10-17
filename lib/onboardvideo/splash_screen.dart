@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 import 'package:mwave/auth/onboard_screen.dart';
 import 'package:mwave/constants/colors.dart';
 import 'package:mwave/view/bottumbar1.dart';
@@ -73,14 +74,14 @@ class _SplashScreenState extends State<SplashScreen>
           opacity: _animation,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+            children: [ Lottie.asset('assets/images/Animation - 1729157358008.json'),
               // App Logo (replace with your actual logo asset)
-              Icon(
-                Icons.attach_money, // Placeholder for logo
-                size: 100.w,
-                color: Colors.white,
-              ),
-              SizedBox(height: 20.h),
+              // Icon(
+              //   Icons.attach_money, // Placeholder for logo
+              //   size: 100.w,
+              //   color: Colors.white,
+              // ),
+            //  SizedBox(height: 20.h),
 
               // App Name
               Text(
@@ -93,13 +94,13 @@ class _SplashScreenState extends State<SplashScreen>
               ),
 
               // Tagline
-              Text(
-                'Manage your finances effortlessly',
-                style: GoogleFonts.poppins(
-                  fontSize: 16.sp,
-                  color: Colors.white70,
-                ),
-              ),
+              // Text(
+              //   'Manage your finances effortlessly',
+              //   style: GoogleFonts.poppins(
+              //     fontSize: 16.sp,
+              //     color: Colors.white70,
+              //   ),
+              // ),
             ],
           ),
         ),

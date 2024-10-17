@@ -87,8 +87,10 @@ class _BottumNavBarState extends State<BottumNavBar> {
                   ),
                 ),
                 BottomBarItem(
-                  inActiveItem: Icon(Icons.history, color: kwhite),
-                  activeItem: Icon(Icons.history, color: kwhite),
+                  inActiveItem: Text('''M'''),
+                  //Icon(Icons.history, color: kwhite),
+                  activeItem:Text('''M'''),
+                  // Icon(Icons.history, color: kwhite),
                 ),
                 BottomBarItem(
                   inActiveItem: Icon(Icons.group, color: kwhite),
