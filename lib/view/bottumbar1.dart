@@ -54,17 +54,17 @@ class _BottumNavBarState extends State<BottumNavBar> {
           ? AnimatedNotchBottomBar(
               /// Provide NotchBottomBarController
               notchBottomBarController: _controller,
-              color: Color(0xFF9B87D5),
+              color: kwhite,
               showLabel: true,
               textOverflow: TextOverflow.visible,
               maxLine: 1,
-              shadowElevation: 5,
+              shadowElevation: 1,
               kBottomRadius: 28.0,
-
+showShadow:true,
               notchShader: SweepGradient(
                 startAngle: 0,
                 endAngle: pi / 2,
-                colors: [kblue, kblue, kblue],
+                colors: [kwhite, kwhite, kwhite],
                 tileMode: TileMode.mirror,
               ).createShader(Rect.fromCircle(center: Offset.zero, radius: 8.0)),
               notchColor: Colors.black87,
@@ -72,7 +72,7 @@ class _BottumNavBarState extends State<BottumNavBar> {
               /// restart app if you change removeMargins
               removeMargins: false,
               bottomBarWidth: 500,
-              showShadow: false,
+           
               durationInMilliSeconds: 300,
 
               itemLabelStyle: const TextStyle(fontSize: 10),
@@ -80,30 +80,30 @@ class _BottumNavBarState extends State<BottumNavBar> {
               elevation: 1,
               bottomBarItems: [
                 BottomBarItem(
-                  inActiveItem: Icon(Icons.home_filled, color: kwhite),
+                  inActiveItem: Icon(Icons.home_filled, color: kblue),
                   activeItem: Icon(
                     Icons.home_filled,
-                    color: kwhite,
+                    color: kblue,
                   ),
                 ),
                 BottomBarItem(
-                  inActiveItem: Text('''M'''),
+                  inActiveItem:Icon(Icons.mail, color: kblue),
                   //Icon(Icons.history, color: kwhite),
-                  activeItem:Text('''M'''),
+                  activeItem:Icon(Icons.mail, color: kblue),
                   // Icon(Icons.history, color: kwhite),
                 ),
                 BottomBarItem(
-                  inActiveItem: Icon(Icons.group, color: kwhite),
-                  activeItem: Icon(Icons.group, color: kwhite),
+                  inActiveItem: Icon(Icons.group, color: kblue),
+                  activeItem: Icon(Icons.group, color: kblue),
                 ),
                 BottomBarItem(
                   inActiveItem:
-                      Icon(Icons.account_balance_wallet, color: kwhite),
-                  activeItem: Icon(Icons.account_balance_wallet, color: kwhite),
+                      Icon(Icons.account_balance_wallet, color: kblue),
+                  activeItem: Icon(Icons.account_balance_wallet, color: kblue),
                 ),
                 BottomBarItem(
-                  inActiveItem: Icon(Icons.menu, color: kwhite),
-                  activeItem: Icon(Icons.menu, color: kwhite),
+                  inActiveItem: Icon(Icons.menu, color: kblue),
+                  activeItem: Icon(Icons.menu, color: kblue),
                 ),
               ],
               onTap: (index) {

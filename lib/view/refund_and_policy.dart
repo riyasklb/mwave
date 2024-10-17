@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mwave/constants/colors.dart';
 
 class RefundPolicyScreen extends StatelessWidget {
   const RefundPolicyScreen({super.key});
@@ -16,7 +17,7 @@ class RefundPolicyScreen extends StatelessWidget {
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/pixelcut-export 3(1).jpeg'), // Background image
+                image: AssetImage(custombagroundimage), // Background image
                 fit: BoxFit.cover, // Cover the entire screen
               ),
             ),

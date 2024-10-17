@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:mwave/constants/colors.dart';
 import 'package:mwave/controllers/auth_controller.dart';
 
@@ -101,6 +103,7 @@ class _OtpPageState extends State<OtpPage> {
       child: Stack(
         children: [
           _buildAppBar(),
+      
           _buildOtpForm(),
         ],
       ),
@@ -155,12 +158,17 @@ class _OtpPageState extends State<OtpPage> {
       style: GoogleFonts.poppins(
         fontSize: 18,
         fontWeight: FontWeight.w600,
-        color: Colors.white,
+        color: kblue,
       ),
       textAlign: TextAlign.center,
     );
   }
-
+  Widget _buildLottieAnimation() {
+    return SizedBox(
+      height: 200.h,
+      child: Lottie.asset(lottielogingif),
+    );
+  }
   Widget _buildOtpInputField() {
     return TextFormField(
       controller: otpController,

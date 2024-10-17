@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
+import '../constants/colors.dart';
+
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
@@ -66,7 +68,7 @@ class ProfileScreen extends StatelessWidget {
                 Container(
                   decoration: const BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('assets/images/pixelcut-export 3(1).jpeg'), // Background image path
+                      image: AssetImage(custombagroundimage), // Background image path
                       fit: BoxFit.cover, // Cover the entire screen
                     ),
                   ),

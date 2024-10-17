@@ -5,6 +5,7 @@ import 'package:delightful_toast/toast/utils/enums.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mwave/auth/otp_screen.dart';
 import 'package:mwave/onboardvideo/video_scree.dart';
 import 'package:mwave/view/bottumbar1.dart';
@@ -199,5 +200,23 @@ Future<void> resendOtp(String phoneNumber, BuildContext context) async {
     showToast(context, text: 'Error: ${e.toString()}', icon: Icons.error);
   }
 }
+
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+//  var isLoading = false.obs;
+
+  Future<void> loginWithGoogle() async {
+    try {
+     // isLoading.value = true;
+      final user = await _googleSignIn.signIn();
+      if (user != null) {
+        print('Google User: ${user.displayName}');
+        // Handle navigation or authentication logic here.
+      }
+    } catch (e) {
+      print('Error during Google Sign-In: $e');
+    } finally {
+    //  isLoading.value = false;
+    }
+  }
 
 }

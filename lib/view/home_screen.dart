@@ -22,7 +22,7 @@ class HomeScreen extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/pixelcut-export 3(1).jpeg'),
+                image: AssetImage(custombagroundimage),
                 fit: BoxFit.cover, // Cover the entire screen
               ),
             ),
@@ -135,7 +135,7 @@ class HomeScreen extends StatelessWidget {
       // For example: clear caches, reset state, etc.
 
       // Navigate to the onboard screen
-      Get.offAll(() => Onboard_screen());  // Get.offAll to remove the back stack completely
+      Get.offAll(() => OnboardScreen());  // Get.offAll to remove the back stack completely
     }
   },
 ),

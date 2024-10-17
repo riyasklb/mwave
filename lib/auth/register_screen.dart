@@ -200,7 +200,7 @@ authController.showToast(context,
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/pixelcut-export 3(1).jpeg'),
+                image: AssetImage(custombagroundimage),
                 fit: BoxFit.cover,
               ),
             ),

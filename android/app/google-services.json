@@ -12,7 +12,20 @@
           "package_name": "com.example.mwave"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "202213371458-htvlejjn8dqbiqtd0l4uinndu04lgl4m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.mwave",
+            "certificate_hash": "cfbf8488895a7527766ca66eccc3e7ed35445f23"
+          }
+        },
+        {
+          "client_id": "202213371458-m3cl3thbjqdu774ji5aurf83qokf6s23.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAQihL_GwDPoyznO2KF3HDRy91YriHaN4g"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "202213371458-m3cl3thbjqdu774ji5aurf83qokf6s23.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "202213371458-d5p9fktqiejin02mgrj5uil0v8pmu3ou.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.mwave"
+              }
+            }
+          ]
         }
       }
     },
@@ -31,7 +56,12 @@
           "package_name": "com.example.phonenumber"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "202213371458-m3cl3thbjqdu774ji5aurf83qokf6s23.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAQihL_GwDPoyznO2KF3HDRy91YriHaN4g"
@@ -39,7 +69,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "202213371458-m3cl3thbjqdu774ji5aurf83qokf6s23.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "202213371458-d5p9fktqiejin02mgrj5uil0v8pmu3ou.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.mwave"
+              }
+            }
+          ]
         }
       }
     }

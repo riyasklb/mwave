@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mwave/constants/colors.dart';
 import 'package:mwave/view/profile_screen.dart';
 import 'package:mwave/view/refund_and_policy.dart';
 import 'package:mwave/view/share_referal_screen.dart';
@@ -19,7 +20,7 @@ class MenuScreen extends StatelessWidget {
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/pixelcut-export 3(1).jpeg'), // Path to your image
+                image: AssetImage(custombagroundimage), // Path to your image
                 fit: BoxFit.cover, // Cover the entire screen
            
               ),

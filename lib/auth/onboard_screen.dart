@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mwave/auth/login_screen.dart';
 import 'package:mwave/auth/register_screen.dart';
 import 'package:mwave/constants/colors.dart';
 
-class Onboard_screen extends StatelessWidget {
-  const Onboard_screen({super.key});
+class OnboardScreen extends StatelessWidget {
+  const OnboardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Ensure ScreenUtil is initialized before using
+    
+
     return Scaffold(
-      // Use Stack to layer background image and gradient
       body: Stack(
         children: [
           // Background image
@@ -38,73 +40,68 @@ class Onboard_screen extends StatelessWidget {
           // Main content
           Center(
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: EdgeInsets.all(16.w),
               child: Column(
-                mainAxisAlignment:
-                    MainAxisAlignment.center, // Vertically center the items
-                crossAxisAlignment:
-                    CrossAxisAlignment.center, // Horizontally center the items
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   // Logo at the top center
                   CircleAvatar(
-                    radius: 80, // Half of the desired height
+                    radius: 80.r, // Adjust with ScreenUtil
                     backgroundImage: const AssetImage(
                       'assets/images/WhatsApp Image 2024-10-03 at 2.50.54 PM(1).jpeg',
                     ),
                   ),
-
-                  const SizedBox(height: 40),
+                  SizedBox(height: 40.h), // Adjusted height
 
                   // Welcome Text
                   Text(
                     'Money Wave',
                     style: GoogleFonts.poppins(
-                      color: Colors.white,
-                      fontSize: 24,
+                      color: kblue,
+                      fontSize: 24.sp, // Scaled font size
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16.h), // Adjusted height
 
                   // Login Button
                   SizedBox(
                     width: double.infinity, // Full-width button
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16.0),
+                        padding: EdgeInsets.symmetric(vertical: 16.h),
                         backgroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(12), // Rounded corners
+                          borderRadius: BorderRadius.circular(12.r),
                         ),
-                        elevation: 5, // Shadow effect
+                        elevation: 5,
                       ),
                       onPressed: () {
-
                         Get.to(LoginPage());
-                     
                       },
                       child: Text(
                         'Log in',
                         style: GoogleFonts.poppins(
-                          color: kblue, // Text color matches the theme
-                          fontSize: 18,
+                          color: kblue,
+                          fontSize: 18.sp,
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16.h),
+
+                  // Register Button
                   SizedBox(
-                    width: double.infinity, // Full-width button
+                    width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16.0),
-                        backgroundColor: null,
+                        padding: EdgeInsets.symmetric(vertical: 16.h),
+                        backgroundColor: kblue, // No background
                         shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(12), // Rounded corners
+                          borderRadius: BorderRadius.circular(12.r),
                         ),
-                        elevation: 5, // Shadow effect
+                        elevation: 5,
                       ),
                       onPressed: () {
                         Navigator.push(
@@ -116,24 +113,24 @@ class Onboard_screen extends StatelessWidget {
                       child: Text(
                         'Register',
                         style: GoogleFonts.poppins(
-                          color: kwhite, // Text color matches the theme
-                          fontSize: 18,
+                          color: kwhite,
+                          fontSize: 18.sp,
                         ),
                       ),
                     ),
                   ),
-
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20.h),
 
                   // Help Text
                   TextButton(
                     onPressed: () {
-                      // Add help functionality
+                      // Add help functionality here
                     },
                     child: Text(
                       'Need Help?',
                       style: GoogleFonts.poppins(
                         color: kblue,
+                        fontSize: 14.sp,
                       ),
                     ),
                   ),

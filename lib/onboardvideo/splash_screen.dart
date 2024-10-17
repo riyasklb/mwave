@@ -54,7 +54,7 @@ class _SplashScreenState extends State<SplashScreen>
       print('No user logged in');
       // If no user is logged in, navigate to the onboard screen
       Future.delayed(Duration(seconds: 3), () {
-        Get.offAll(() => Onboard_screen()); // Navigate to Onboard_screen
+        Get.offAll(() => OnboardScreen()); // Navigate to Onboard_screen
       });
     }
   }
