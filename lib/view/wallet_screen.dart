@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mwave/constants/colors.dart';
 
 class WalletScreen extends StatefulWidget {
   @override
@@ -14,7 +15,7 @@ class _WalletScreenState extends State<WalletScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _withdrawAmountController = TextEditingController();
   final TextEditingController _mobileController = TextEditingController();
-  
+
   int walletAmount = 0;
   bool isLoading = true;
 
@@ -70,9 +71,7 @@ class _WalletScreenState extends State<WalletScreen> {
       User? currentUser = _auth.currentUser;
 
       if (currentUser != null) {
-        await FirebaseFirestore.instance
-            .collection('withdrawRequests')
-            .add({
+        await FirebaseFirestore.instance.collection('withdrawRequests').add({
           'uid': currentUser.uid,
           'amount': withdrawAmount,
           'mobile': _mobileController.text,
@@ -100,97 +99,174 @@ class _WalletScreenState extends State<WalletScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'Wallet',
-            style: GoogleFonts.poppins(fontSize: 20.sp, fontWeight: FontWeight.w600),
+    return Scaffold(backgroundColor: kblue,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        title: Text(
+          'Wallet',
+          style: GoogleFonts.poppins(
+            fontSize: 24.sp,
+            fontWeight: FontWeight.w600,color: kwhite
           ),
         ),
-        body: Center(
-          child: isLoading
-              ? CircularProgressIndicator()
-              : Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 32.h),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Your Wallet Balance',
-                        style: GoogleFonts.poppins(
-                          fontSize: 24.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      SizedBox(height: 16.h),
-                      Text(
-                        '₹$walletAmount',
-                        style: GoogleFonts.poppins(
-                          fontSize: 32.sp,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green,
-                        ),
-                      ),
-                      SizedBox(height: 24.h),
-                      ElevatedButton(
-                        onPressed: _loadWalletAmount,
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: Size(200.w, 50.h),
-                        ),
-                        child: Text(
-                          'Refresh',
-                          style: GoogleFonts.poppins(fontSize: 16.sp, fontWeight: FontWeight.w500),
-                        ),
-                      ),
-                      SizedBox(height: 32.h),
-                      if (walletAmount >= 200) ...[
-                        Text(
-                          'Enter Withdrawal Amount',
-                          style: GoogleFonts.poppins(fontSize: 18.sp, fontWeight: FontWeight.w500),
-                        ),
-                        SizedBox(height: 8.h),
-                        TextField(
-                          controller: _withdrawAmountController,
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            hintText: 'Enter amount',
-                          ),
-                        ),
-                        SizedBox(height: 16.h),
-                        TextField(
-                          controller: _mobileController,
-                          keyboardType: TextInputType.phone,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            hintText: 'Enter mobile number',
-                          ),
-                        ),
-                        SizedBox(height: 24.h),
-                        ElevatedButton(
-                          onPressed: _submitWithdrawalRequest,
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: Size(200.w, 50.h),
-                          ),
-                          child: Text(
-                            'Withdraw',
-                            style: GoogleFonts.poppins(fontSize: 16.sp, fontWeight: FontWeight.w500),
-                          ),
-                        ),
-                        SizedBox(height: 16.h),
-                        Text(
-                          'The amount will be credited within 24 hours.',
-                          style: GoogleFonts.poppins(
-                            fontSize: 14.sp,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ],
+        centerTitle: true,
+        leading: Icon(Icons.menu, color: kwhite),
+        actions: [Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Icon(Icons.notifications, color: kwhite),
+        )],
+      ),
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 32.h),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Wallet Balance Container
+            Container(height: 200,width: 200,
+              padding: EdgeInsets.all(20.w),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(50.r),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.2),
+                    blurRadius: 10,
+                    spreadRadius: 5,
                   ),
+                ],
+              ),
+              child: Column(mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Balance',
+                    style: GoogleFonts.poppins(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  Text(
+                    '₹$walletAmount',
+                    style: GoogleFonts.poppins(
+                      fontSize: 32.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  Text(
+                    '89,598.43 BGP', // Example secondary currency
+                    style: GoogleFonts.poppins(
+                      fontSize: 14.sp,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 30.h),
+
+            // Send & Receive Buttons
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildActionButton('Send', Icons.arrow_upward, Colors.purple),
+                _buildActionButton('Receive', Icons.arrow_downward, Colors.teal),
+              ],
+            ),
+            SizedBox(height: 32.h),
+
+            // Transaction History
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Transaction History',
+                style: GoogleFonts.poppins(color: kwhite,
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w500,
                 ),
+              ),
+            ),
+            SizedBox(height: 16.h),
+
+            // List of Transactions (Placeholder)
+            _buildTransactionItem(
+              'Sent', '-112.40 GBP', 'unconfirmed', Colors.red,
+            ),
+            _buildTransactionItem(
+              'Received', '+12.19 GBP', 'confirmed', Colors.green,
+            ),
+            _buildTransactionItem(
+              'Sent', '-112.40 GBP', 'Cancelled', Colors.red,
+            ),
+          ],
         ),
-      );
-    
+      ),
+    );
+  }
+
+  // Action Button Widget (Send/Receive)
+  Widget _buildActionButton(String title, IconData icon, Color color) {
+    return ElevatedButton.icon(
+      onPressed: () {},
+      icon: Icon(icon, color: Colors.white),
+      label: Text(
+        title,
+        style: GoogleFonts.poppins(fontSize: 16.sp, fontWeight: FontWeight.w500),
+      ),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: color,
+        padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+      ),
+    );
+  }
+
+  // Transaction Item Widget
+  Widget _buildTransactionItem(
+      String type, String amount, String status, Color amountColor) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 16.h),
+      padding: EdgeInsets.all(16.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            blurRadius: 5,
+            spreadRadius: 2,
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(type, style: GoogleFonts.poppins(fontSize: 16.sp)),
+              SizedBox(height: 4.h),
+              Text('13 Jan 2019 • $status',
+                  style: GoogleFonts.poppins(
+                    fontSize: 12.sp,
+                    color: Colors.grey,
+                  )),
+            ],
+          ),
+          Text(
+            amount,
+            style: GoogleFonts.poppins(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.bold,
+              color: amountColor,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

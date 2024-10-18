@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:lottie/lottie.dart';
 import 'package:mwave/constants/colors.dart';
 import 'package:mwave/constants/widgets/custom_formfield.dart';
 import 'package:mwave/constants/widgets/custom_snackbar.dart';
@@ -36,85 +38,83 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _isOtpSent = false;
   String _verificationId = '';
 
-void _sendOtp() async {
-  if (_formKey.currentState!.validate()) {
-    _formKey.currentState!.save();
-    setState(() {
-      _isLoading = true;
-    });
+  void _sendOtp() async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      setState(() {
+        _isLoading = true;
+      });
 
-    try {
-      // Check if phone number is already registered
-      String phoneNumberWithPrefix = '+91' + _phone.trim();
-      QuerySnapshot existingUsers = await _firestore
-          .collection('users')
-          .where('phone', isEqualTo: _phone)
-          .get();
+      try {
+        // Check if phone number is already registered
+        String phoneNumberWithPrefix = '+91' + _phone.trim();
+        QuerySnapshot existingUsers = await _firestore
+            .collection('users')
+            .where('phone', isEqualTo: _phone)
+            .get();
 
-      if (existingUsers.docs.isNotEmpty) {
-        // Phone number already exists
+        if (existingUsers.docs.isNotEmpty) {
+          // Phone number already exists
+          setState(() {
+            _isLoading = false;
+          });
+
+          authController.showToast(
+            context,
+            text: 'Phone number is already registered!',
+            icon: Icons.error,
+          );
+
+          return;
+        }
+
+        // Phone number does not exist, proceed with OTP verification
+        await _auth.verifyPhoneNumber(
+          phoneNumber: phoneNumberWithPrefix,
+          timeout: const Duration(seconds: 60),
+          verificationCompleted: (PhoneAuthCredential credential) async {
+            await _auth.signInWithCredential(credential);
+            await _saveUserToFirestore();
+          },
+          verificationFailed: (FirebaseAuthException e) {
+            setState(() {
+              _isLoading = false;
+            });
+            authController.showToast(
+              context,
+              text: 'Verification failed: ${e.message}',
+              icon: Icons.error,
+            );
+          },
+          codeSent: (String verificationId, int? resendToken) {
+            setState(() {
+              _isLoading = false;
+              _isOtpSent = true;
+              _verificationId = verificationId;
+            });
+            authController.showToast(
+              context,
+              text: 'OTP sent successfully!',
+              icon: Icons.check,
+            );
+          },
+          codeAutoRetrievalTimeout: (String verificationId) {
+            _verificationId = verificationId;
+          },
+        );
+      } catch (e) {
         setState(() {
           _isLoading = false;
         });
 
-      authController.showToast(context,
-          text: 'Phone number is already registered!',
-          icon: Icons.error,
-        );
-     
-        return;
-      }
-
-      // Phone number does not exist, proceed with OTP verification
-      await _auth.verifyPhoneNumber(
-        phoneNumber: phoneNumberWithPrefix,
-        timeout: const Duration(seconds: 60),
-        verificationCompleted: (PhoneAuthCredential credential) async {
-          await _auth.signInWithCredential(credential);
-          await _saveUserToFirestore();
-        },
-        verificationFailed: (FirebaseAuthException e) {
-          setState(() {
-            _isLoading = false;
-          });
-  authController.showToast(context,
-          text: 'Verification failed: ${e.message}',
-          icon: Icons.error,
-        );
-
-
-         
-        },
-        codeSent: (String verificationId, int? resendToken) {
-          setState(() {
-            _isLoading = false;
-            _isOtpSent = true;
-            _verificationId = verificationId;
-          });
-            authController.showToast(context,
-          text: 'OTP sent successfully!',
-          icon: Icons.check,
-        );
-       
-        },
-        codeAutoRetrievalTimeout: (String verificationId) {
-          _verificationId = verificationId;
-        },
-      );
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-
-           authController.showToast(context,
+        authController.showToast(
+          context,
           text: 'Error: ${e.toString()}',
           icon: Icons.error,
         );
-     
+      }
     }
   }
-}
-
 
   void _verifyOtp() async {
     setState(() {
@@ -129,19 +129,17 @@ void _sendOtp() async {
 
       await _auth.signInWithCredential(credential);
       await _saveUserToFirestore();
-     Get.offAll( VideoSelectionScreen());
+      Get.offAll(VideoSelectionScreen());
     } catch (e) {
       setState(() {
         _isLoading = false;
       });
 
-  authController.showToast(context,
-          text: 'OTP verification failed: $e',
-          icon: Icons.error,
-        );
-     
-
-    
+      authController.showToast(
+        context,
+        text: 'OTP verification failed: $e',
+        icon: Icons.error,
+      );
     }
   }
 
@@ -166,19 +164,20 @@ void _sendOtp() async {
       setState(() {
         _isLoading = false;
       });
- authController.showToast(context,
-          text: 'User registered successfully with Referral ID!',
-          icon: Icons.check,
-        );
-    
+      authController.showToast(
+        context,
+        text: 'User registered successfully with Referral ID!',
+        icon: Icons.check,
+      );
     } catch (e) {
       setState(() {
         _isLoading = false;
       });
-authController.showToast(context,
-          text: 'Error saving user: $e',
-          icon: Icons.error,
-        );
+      authController.showToast(
+        context,
+        text: 'Error saving user: $e',
+        icon: Icons.error,
+      );
 
       // ScaffoldMessenger.of(context).showSnackBar(
       //   SnackBar(content: Text('Error saving user: $e')),
@@ -206,7 +205,7 @@ authController.showToast(context,
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 25),
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -231,7 +230,8 @@ authController.showToast(context,
                           child: Center(
                             child: ListView(
                               children: [
-                                kheight40,
+                              
+                                _buildLottieAnimation(),
                                 kheight40,
                                 if (!_isOtpSent) ...[
                                   CustomTextField(
@@ -305,20 +305,27 @@ authController.showToast(context,
                                     },
                                   ),
                                   kheight40,
-                                  ElevatedButton(
-                                    onPressed: _sendOtp,
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 12),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                      onPressed: _sendOtp,
+                                      style: ElevatedButton.styleFrom(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 14.h),
+                                        backgroundColor: kblue,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12.r),
+                                        ),
+                                        elevation: 5,
+                                      ),
                                       child: const Text('Send OTP',
                                           style: TextStyle(fontSize: 18)),
                                     ),
                                   ),
                                 ],
                                 if (_isOtpSent) ...[
-                                  kheight40,
-                                  kheight40,
-                                  kheight40,
+                                 
                                   kheight40,
                                   CustomTextField(
                                     hintText: 'Enter OTP',
@@ -334,13 +341,26 @@ authController.showToast(context,
                                     },
                                   ),
                                   const SizedBox(height: 20),
-                                  ElevatedButton(
-                                    onPressed: _verifyOtp,
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 12),
-                                      child: const Text('Verify OTP',
-                                          style: TextStyle(fontSize: 18)),
+                                  SizedBox(
+                                    width: double.infinity, // Full width
+                                    // Adjust height as needed
+                                    child: ElevatedButton(
+                                      onPressed: _verifyOtp,
+                                      style: ElevatedButton.styleFrom(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 13.h),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              12.r), // Less curve
+                                        ),
+                                        backgroundColor:
+                                            kblue, // Customize color
+                                        elevation: 2, // Optional: Slight shadow
+                                      ),
+                                      child: const Text(
+                                        'Verify OTP',
+                                        style: TextStyle(fontSize: 18),
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -354,6 +374,13 @@ authController.showToast(context,
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildLottieAnimation() {
+    return SizedBox(
+      height: 200.h,
+      child: Lottie.asset(lottielogingif),
     );
   }
 }

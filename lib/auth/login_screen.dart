@@ -73,6 +73,8 @@ class LoginPage extends StatelessWidget {
               _buildPhoneNumberInput(),
               SizedBox(height: 24.h),
               _buildLoginButton(context),
+              SizedBox(height: 24.h),
+              buildLoginOptions(),
               SizedBox(height: 16.h),
               _buildGoogleLoginButton(),
             ],
@@ -88,6 +90,51 @@ class LoginPage extends StatelessWidget {
       child: Lottie.asset(lottielogingif),
     );
   }
+Widget buildLoginOptions() {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.center, // Center-align the row
+    children: [
+      GestureDetector(
+        onTap: () {
+          // Handle OTP login tap event
+          print("Login with OTP tapped");
+        },
+        child: Text(
+          'Login with OTP',
+          style: TextStyle(
+            fontSize: 16.sp,
+            color: Colors.grey, // Make it look like a clickable link
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+      const SizedBox(width: 10), // Space between the texts
+      Text(
+        'OR', // Separator
+        style: TextStyle(
+          fontSize: 16.sp,
+          color: kblack,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      const SizedBox(width: 10), // Space between the texts
+      GestureDetector(
+        onTap: () {
+          // Handle Google login tap event
+          print("Google Login tapped");
+        },
+        child: Text(
+          'Google Login',
+          style: TextStyle(
+            fontSize: 16.sp,
+            color:Colors.grey,// Same link style for consistency
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    ],
+  );
+}
 
   Widget _buildPhoneNumberInput() {
     return Column(

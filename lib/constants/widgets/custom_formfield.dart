@@ -39,31 +39,31 @@ class CustomTextField extends StatelessWidget {
         hintText: hintText,
         border: border ??
             OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30),
+              borderRadius: BorderRadius.circular(16),
             ),
         errorBorder: errorBorder ??
             OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30),
+              borderRadius: BorderRadius.circular(16),
               borderSide: const BorderSide(color: Colors.red, width: 1),
             ),
         focusedBorder: focusedBorder ??
             OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30),
+              borderRadius: BorderRadius.circular(16),
               borderSide: BorderSide(color: kblue, width: 1),
             ),
         focusedErrorBorder: focusedErrorBorder ??
             OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30),
+              borderRadius: BorderRadius.circular(16),
               borderSide: const BorderSide(color: Colors.red, width: 1),
             ),
         disabledBorder: disabledBorder ??
             OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30),
+              borderRadius: BorderRadius.circular(16),
               borderSide: const BorderSide(color: Colors.grey, width: 1),
             ),
         enabledBorder: enabledBorder ??
             OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30),
+              borderRadius: BorderRadius.circular(16),
               borderSide: BorderSide(color: kblue, width: 1),
             ),
         contentPadding:

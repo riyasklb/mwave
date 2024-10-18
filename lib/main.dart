@@ -4,15 +4,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
-import 'package:mwave/auth/login_screen.dart';
 import 'package:mwave/constants/colors.dart';
-
+import 'package:mwave/controllers/get_referals_controller.dart';
 import 'package:mwave/firebase_options.dart';
 import 'package:mwave/onboardvideo/splash_screen.dart';
-import 'package:mwave/onboardvideo/video_scree.dart';
-import 'package:mwave/view/bottumbar1.dart';
-import 'package:mwave/view/refund_and_policy.dart';
-
 import 'controllers/auth_controller.dart';
 
 void main() async {
@@ -21,6 +16,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   Get.lazyPut(()=>AuthController());
+    Get.lazyPut(()=>GetReferralController());
   runApp(const MyApp());
 }
 

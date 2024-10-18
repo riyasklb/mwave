@@ -5,6 +5,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mwave/constants/colors.dart';
 import 'package:mwave/view/profile_screen.dart';
+import 'package:mwave/view/referal_screen.dart';
 import 'package:mwave/view/refund_and_policy.dart';
 import 'package:mwave/view/share_referal_screen.dart';
 
@@ -101,6 +102,7 @@ class MenuScreen extends StatelessWidget {
                   icon: Icons.help,
                   label: 'Help and Support',
                   onTap: () {
+                    Get.to(ReferralScreen());
                     // Navigate to Help and Support screen
                   },
                 ),

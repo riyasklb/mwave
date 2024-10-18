@@ -24,3 +24,4 @@ SizedBox kheight10 = SizedBox(
 const String custombagroundimage = 'assets/images/WhatsApp Image 2024-10-17 at 2.25.11 PM.jpeg';
 Image bagroundimage = Image.asset(custombagroundimage);
 const String lottielogingif  = 'assets/images/Animation - 1729158303254.json';
+const String lottiereferal='assets/images/Animation - 1729244860313.json';

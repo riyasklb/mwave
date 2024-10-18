@@ -136,7 +136,8 @@ class _OtpPageState extends State<OtpPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const SizedBox(height: 60), // Space for the AppBar
+            const SizedBox(height: 60), 
+            _buildLottieAnimation(),kheight40,// Space for the AppBar
             _buildOtpInstructions(),
             const SizedBox(height: 16),
             _buildOtpInputField(),
@@ -183,16 +184,22 @@ class _OtpPageState extends State<OtpPage> {
         fillColor: Colors.white.withOpacity(0.7),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30.0),
-          borderSide: BorderSide.none,
+          borderSide: BorderSide(
+            color: kblue,
+            width: 1.0,
+          ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30.0),
-          borderSide: BorderSide.none,
+          borderSide:BorderSide(
+            color: kblue,
+            width: 1.0,
+          ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30.0),
-          borderSide: const BorderSide(
-            color: Colors.blue,
+          borderSide:  BorderSide(
+            color: kblue,
             width: 1.0,
           ),
         ),
@@ -249,4 +256,5 @@ class _OtpPageState extends State<OtpPage> {
       ),
     );
   }
+  
 }

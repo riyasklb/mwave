@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mwave/auth/otp_screen.dart';
-import 'package:mwave/onboardvideo/video_scree.dart';
+
 import 'package:mwave/view/bottumbar1.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
