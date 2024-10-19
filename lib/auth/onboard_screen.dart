@@ -47,7 +47,7 @@ class OnboardScreen extends StatelessWidget {
                 children: [
                   // Logo at the top center
                   CircleAvatar(
-                    radius: 80.r, // Adjust with ScreenUtil
+                    radius: 129.r, // Adjust with ScreenUtil
                     backgroundImage: const AssetImage(
                       'assets/images/WhatsApp Image 2024-10-03 at 2.50.54 PM(1).jpeg',
                     ),
@@ -59,11 +59,11 @@ class OnboardScreen extends StatelessWidget {
                     'Money Wave',
                     style: GoogleFonts.poppins(
                       color: kblue,
-                      fontSize: 24.sp, // Scaled font size
+                      fontSize: 35.sp, // Scaled font size
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 16.h), // Adjusted height
+                  SizedBox(height: 39.h), // Adjusted height
 
                   // Login Button
                   SizedBox(

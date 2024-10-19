@@ -87,7 +87,7 @@ class LoginPage extends StatelessWidget {
   Widget _buildLottieAnimation() {
     return SizedBox(
       height: 200.h,
-      child: Lottie.asset(lottielogingif),
+      child: Lottie.asset('assets/images/Animation - 1729258623492.json'),
     );
   }
 Widget buildLoginOptions() {
