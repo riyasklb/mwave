@@ -4,26 +4,12 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mwave/constants/colors.dart';
 import 'package:mwave/controllers/referal_controller.dart';
-import 'package:mwave/model/referal_model.dart';
-
-import 'package:skeletonizer/skeletonizer.dart';
-
-import 'package:flutter/widgets.dart';
-
-
-
-
-
+import 'package:intl/intl.dart'; // Importing intl for DateFormat
 
 class MyReferalsScreen extends StatelessWidget {
+  final ReferralController referralController = Get.put(ReferralController());
 
-  final ReferralController controller = Get.put(ReferralController());
-
-  /// **Flag to determine where to navigate after submission**
- 
-
-  MyReferalsScreen({Key? key,})
-      : super(key: key);
+  MyReferalsScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -32,32 +18,23 @@ class MyReferalsScreen extends StatelessWidget {
         children: [
           Positioned.fill(
             child: Image.asset(
-              custombagroundimage,
-              fit: BoxFit.cover,
+              custombagroundimage, // Ensure this path is correct
+              fit: BoxFit.cover,    // Adjust the fit as necessary
             ),
           ),
-          Positioned.fill(
-            child: Container(
-              padding: EdgeInsets.all(24.0.sp),
-              child: GetBuilder<ReferralController>(
-                builder: (controller) {
-                  return SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        
-                            
-                           
-                       if (!controller.referralUsed)
-                          
-                        SizedBox(height: 40.h),
-                        _buildYourReferralsTitle(),
-                        _buildReferralList(controller),
-                      ],
-                    ),
-                  );
-                },
-              ),
+          Padding(
+            padding: EdgeInsets.all(24.0.sp), // Use ScreenUtil for responsive padding
+            child: GetBuilder<ReferralController>(
+              builder: (controller) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (!controller.referralUsed.value) SizedBox(height: 40.h),
+                    _buildYourReferralsTitle(),
+                    Expanded(child: _buildReferralList(controller)), // Use Expanded here
+                  ],
+                );
+              },
             ),
           ),
         ],
@@ -65,19 +42,15 @@ class MyReferalsScreen extends StatelessWidget {
     );
   }
 
-
-
-
-
   Widget _buildYourReferralsTitle() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 40.h),
+        SizedBox(height: 40.h), // Responsive height using ScreenUtil
         Text(
           'Your Referrals',
           style: GoogleFonts.poppins(
-            fontSize: 24.sp,
+            fontSize: 24.sp, // Responsive font size
             fontWeight: FontWeight.w600,
             color: Colors.white,
           ),
@@ -88,48 +61,90 @@ class MyReferalsScreen extends StatelessWidget {
   }
 
   Widget _buildReferralList(ReferralController controller) {
-    return FutureBuilder<List<Referral>>(
-      future: controller.getReferrals(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Column(
-            children: [
-              SizedBox(height: 10.h),
-              Skeletonizer(
-                child: Card(
-                  child: Container(
-                    height: 60.h,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: kwhite,
-                      borderRadius: BorderRadius.circular(8.sp),
-                    ),
+    return ListView.builder(
+      itemCount: controller.referrals.length,
+      itemBuilder: (context, index) {
+        final referral = controller.referrals[index];
+
+        return Card(
+          margin: EdgeInsets.symmetric(vertical: 8.0.sp, horizontal: 16.0.sp), // Use ScreenUtil for margins
+          child: ListTile(
+            contentPadding: EdgeInsets.all(16.0.sp), // Use ScreenUtil for padding
+            leading: CircleAvatar(
+              child: Text(referral.username[0].toUpperCase()), // Capitalize the first letter
+            ),
+            title: Text(
+              _capitalizeFirstLetter(referral.username), // Capitalize the first letter of the username
+              style: GoogleFonts.poppins(
+                fontSize: 18.sp, // Responsive font size
+                fontWeight: FontWeight.w500,
+                color: Colors.black, // Adjust color as needed
+              ),
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  referral.email,
+                  style: GoogleFonts.poppins(
+                    fontSize: 14.sp, // Responsive font size
+                    color: Colors.black54, // Adjust color as needed
                   ),
                 ),
-              ),
-            ],
-          );
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-          return ListView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: snapshot.data!.length,
-            itemBuilder: (context, index) {
-              final referral = snapshot.data![index];
-              return Card(
-                child: ListTile(
-                  title: Text(referral.username),
-                  subtitle: Text(referral.email),
+                const SizedBox(height: 4.0),
+                Text(
+                  "Referred on: ${DateFormat('yyyy-MM-dd').format(referral.referredOn)}",
+                  style: GoogleFonts.poppins(
+                    fontSize: 12.sp, // Responsive font size
+                    color: Colors.grey,
+                  ),
                 ),
-              );
-            },
-          );
-        } else {
-          return Text('No referrals yet.');
-        }
+                const SizedBox(height: 8.0),
+                referral.subReferrals.isNotEmpty
+                    ? ExpansionTile(
+                        title: Text(
+                          "Sub-referrals",
+                          style: GoogleFonts.poppins(
+                            fontSize: 16.sp, // Responsive font size
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
+                        children: referral.subReferrals.map((subReferral) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                            child: ListTile(
+                              leading: const Icon(Icons.arrow_right),
+                              title: Text(
+                                _capitalizeFirstLetter(subReferral.username), // Capitalize the first letter of sub-referral username
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16.sp, // Responsive font size
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              subtitle: Text(
+                                "Referred on: ${DateFormat('yyyy-MM-dd').format(subReferral.referredOn)}",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 12.sp, // Responsive font size
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      )
+                    : const SizedBox(),
+              ],
+            ),
+          ),
+        );
       },
     );
+  }
+
+  String _capitalizeFirstLetter(String text) {
+    if (text.isEmpty) return text; // Return empty if the text is empty
+    return text[0].toUpperCase() + text.substring(1); // Capitalize first letter and append the rest
   }
 }

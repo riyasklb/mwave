@@ -137,52 +137,70 @@ class ReferralScreen extends StatelessWidget {
   }
 
   Widget _buildSubmitButton(ReferralController controller) {
-    return Center(
-      child: SizedBox(
-        width: double.infinity,
-        height: 50.h,
-        child: ElevatedButton(
-          onPressed: () async {
-            if (controller.isLoading) return;
+  return GetBuilder<ReferralController>(
+    builder: (context) {
+      return Center(
+        child: SizedBox(
+          width: double.infinity,
+          height: 50.h,
+          child: ElevatedButton(
+            onPressed: controller.isLoading 
+                ? null // Disable the button if loading
+                : () async {
+                    String referralId = _referralCodeController.text.trim();
+                    if (referralId.isEmpty) {
+                      Get.snackbar(
+                        'Error',
+                        'Please enter a referral code.',
+                        snackPosition: SnackPosition.TOP,
+                      );
+                    } else {
+                      // Set loading to true
+                      controller.isLoading = true;
+                      controller.update(); // Notify the controller to update the UI
+                      
+                      await controller.addReferral(referralId);
 
-            String referralId = _referralCodeController.text.trim();
-            if (referralId.isEmpty) {
-              Get.snackbar(
-                'Error',
-                'Please enter a referral code.',
-                snackPosition: SnackPosition.TOP,
-              );
-            } else {
-              await controller.addReferral(referralId);
+                      // Set loading to false
+                      controller.isLoading = false;
+                      controller.update(); // Notify the controller to update the UI
 
-              if (controller.referralUsed) {
-                Get.offAll(() => BottumNavBar());
-              }
-            }
-          },
-          child: controller.isLoading
-              ? CircularProgressIndicator(
-                  color:
-                      Colors.black) // Black for visibility on white background
-              : Text(
-                  'Submit',
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    color: Colors.black, // Black text for contrast
+                      if (controller.referralUsed.value) {
+                        Get.offAll(() => BottumNavBar());
+                      }
+                    }
+                  },
+            child: controller.isLoading
+                ? SizedBox(
+                    height: 20.h, // Adjust height for better visibility
+                    width: 20.h, // Adjust width for better visibility
+                    child: CircularProgressIndicator(
+                      color: Colors.black, // Black for visibility on white background
+                      strokeWidth: 2, // Adjust thickness as necessary
+                    ),
+                  )
+                : Text(
+                    'Submit',
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      color: Colors.black, // Black text for contrast
+                    ),
                   ),
-                ),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.white, // White button color
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30.r),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white, // White button color
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30.r),
+              ),
+              elevation: 2, // Optional: Slight shadow for better visibility
+              textStyle: GoogleFonts.poppins(fontSize: 30.sp),
             ),
-            elevation: 2, // Optional: Slight shadow for better visibility
-            textStyle: GoogleFonts.poppins(fontSize: 30.sp),
           ),
         ),
-      ),
-    );
-  }
+      );
+    },
+  );
+}
+
 
   Widget _buildLottieAnimation() {
     return SizedBox(child: Image.asset('assets/images/rb_7121.png')

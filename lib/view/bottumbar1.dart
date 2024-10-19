@@ -1,3 +1,4 @@
+
 import 'dart:math';
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:flutter/material.dart';
@@ -5,9 +6,10 @@ import 'package:mwave/constants/colors.dart';
 import 'package:mwave/view/home_screen.dart';
 import 'package:mwave/view/history_screeen.dart';
 import 'package:mwave/view/menu_screen.dart';
-import 'package:mwave/view/referal_screen.dart';
 import 'package:mwave/view/referals.dart';
 import 'package:mwave/view/wallet_screen.dart';
+
+
 
 class BottumNavBar extends StatefulWidget {
   const BottumNavBar({Key? key}) : super(key: key);
@@ -38,8 +40,8 @@ class _BottumNavBarState extends State<BottumNavBar> {
     final List<Widget> bottomBarPages = [
       HomeScreen(),
       const HistoryScreeen(),
-       MyReferalsScreen(),
-       WalletScreen(),
+      MyReferalsScreen(),
+      WalletScreen(),
       const MenuScreen(),
     ];
     return Scaffold(
@@ -60,7 +62,7 @@ class _BottumNavBarState extends State<BottumNavBar> {
               maxLine: 1,
               shadowElevation: 1,
               kBottomRadius: 28.0,
-showShadow:true,
+              showShadow: true,
               notchShader: SweepGradient(
                 startAngle: 0,
                 endAngle: pi / 2,
@@ -72,7 +74,7 @@ showShadow:true,
               /// restart app if you change removeMargins
               removeMargins: false,
               bottomBarWidth: 500,
-           
+
               durationInMilliSeconds: 300,
 
               itemLabelStyle: const TextStyle(fontSize: 10),
@@ -87,9 +89,9 @@ showShadow:true,
                   ),
                 ),
                 BottomBarItem(
-                  inActiveItem:Icon(Icons.mail, color: kblue),
+                  inActiveItem: Icon(Icons.mail, color: kblue),
                   //Icon(Icons.history, color: kwhite),
-                  activeItem:Icon(Icons.mail, color: kblue),
+                  activeItem: Icon(Icons.mail, color: kblue),
                   // Icon(Icons.history, color: kwhite),
                 ),
                 BottomBarItem(
