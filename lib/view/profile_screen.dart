@@ -18,7 +18,7 @@ class ProfileScreen extends StatelessWidget {
       // Reference to Firestore 'users' collection
       DocumentSnapshot userDoc = await FirebaseFirestore.instance
           .collection('users')
-          .doc(currentUser.uid)
+          .doc(currentUser.email)
           .get();
 
       if (userDoc.exists) {

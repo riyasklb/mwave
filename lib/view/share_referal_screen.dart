@@ -29,16 +29,16 @@ class _ShareReferralScreenState extends State<ShareReferralScreen> {
 Future<void> fetchReferralCode() async {
   try {
     // Get the current user ID
-    String? userId = FirebaseAuth.instance.currentUser?.uid;
+    String? emailId = FirebaseAuth.instance.currentUser?.email;
 
-    if (userId == null) {
+    if (emailId == null) {
       throw Exception('User not logged in');
     }
 
     // Fetch the referralId for the logged-in user
     var documentSnapshot = await FirebaseFirestore.instance
         .collection('users')
-        .doc(userId)
+        .doc(emailId)
         .get();
 
     if (documentSnapshot.exists) {

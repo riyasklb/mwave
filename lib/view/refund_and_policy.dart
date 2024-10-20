@@ -182,7 +182,7 @@ Future<Map<String, String>> _fetchUserData() async {
   // Fetch user data from Firestore
   DocumentSnapshot snapshot = await FirebaseFirestore.instance
       .collection('users') // Change 'users' to your Firestore collection name
-      .doc(user.uid) // Use the user ID as the document ID
+      .doc(user.email) // Use the user ID as the document ID
       .get();
 
   if (!snapshot.exists) {

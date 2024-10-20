@@ -32,7 +32,7 @@ class _WalletScreenState extends State<WalletScreen> {
       if (currentUser != null) {
         var userDoc = await FirebaseFirestore.instance
             .collection('users')
-            .doc(currentUser.uid)
+            .doc(currentUser.email)
             .get();
 
         if (userDoc.exists) {

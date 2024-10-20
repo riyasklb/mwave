@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:mwave/constants/colors.dart';
 import 'package:mwave/controllers/auth_controller.dart';
+import 'package:sign_in_button/sign_in_button.dart';
 import 'package:social_media_buttons/social_media_button.dart';
 
 class LoginPage extends StatelessWidget {
@@ -69,14 +70,14 @@ class LoginPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _buildLottieAnimation(),
-              SizedBox(height: 24.h),
-              _buildPhoneNumberInput(),
-              SizedBox(height: 24.h),
-              _buildLoginButton(context),
-              SizedBox(height: 24.h),
-              buildLoginOptions(),
+             // SizedBox(height: 24.h),
+             // _buildPhoneNumberInput(),
+             // SizedBox(height: 24.h),
+            //  _buildLoginButton(context),
+              SizedBox(height: 60.h),
+             // buildLoginOptions(),
               SizedBox(height: 16.h),
-              _buildGoogleLoginButton(),
+              _buildGoogleLoginButton(context),
             ],
           ),
         ),
@@ -87,7 +88,7 @@ class LoginPage extends StatelessWidget {
   Widget _buildLottieAnimation() {
     return SizedBox(
       height: 200.h,
-      child: Lottie.asset('assets/images/Animation - 1729258623492.json'),
+      child: Lottie.asset(lottielogingif),
     );
   }
 Widget buildLoginOptions() {
@@ -222,33 +223,11 @@ Widget buildLoginOptions() {
     );
   }
 
-  Widget _buildGoogleLoginButton() {
-    return Container(
-      height: 50.h,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: kblue, width: 2.w),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          SocialMediaButton.google(
-            color: kblue,
-            onTap: () {
-              authController.loginWithGoogle();
-            },
-          ),
-          Text(
-            'Continue with Google',
-            style: GoogleFonts.poppins(
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w500,
-              color: kblue,
-            ),
-          ),
-          Icon(Icons.arrow_forward, color: kblue),
-        ],
-      ),
-    );
+  Widget _buildGoogleLoginButton(BuildContext context) {
+    return SignInButton(padding: EdgeInsets.symmetric(vertical: 12,horizontal: 16),
+  Buttons.google,
+  onPressed: () { authController.loginWithGoogle();},
+);
+
   }
 }

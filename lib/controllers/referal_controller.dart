@@ -10,7 +10,7 @@ class ReferralController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   bool isLoading = false;
-  String? uid;
+  String? emailId;
   var referralUsed = false.obs;
   var referrals = <Referral>[].obs;
 
@@ -23,8 +23,8 @@ class ReferralController extends GetxController {
   Future<void> _loadUserData() async {
     User? currentUser = _auth.currentUser;
     if (currentUser != null) {
-      uid = currentUser.uid;
-      var userDoc = await _firestore.collection('users').doc(uid).get();
+      emailId = currentUser.email;
+      var userDoc = await _firestore.collection('users').doc(emailId).get();
       if (userDoc.exists) {
         referralUsed.value = userDoc.data()?['referralUsed'] ?? false;
         await getReferrals();
@@ -35,11 +35,11 @@ class ReferralController extends GetxController {
   Future<void> getReferrals() async {
     
     print('-----------------------1----------------');
-    if (uid != null) {
+    if (emailId != null) {
           print('------------------2---------------------');
       var referralDocs = await _firestore
           .collection('users')
-          .doc(uid)
+          .doc(emailId)
           .collection('referrals')
           .get();
     print('---------------------3------------------');
@@ -63,7 +63,7 @@ Future<void> addReferral(String referralId) async {
   
   print(isLoading);
   print('----------------------6-----------------');
-  var userDoc = await _firestore.collection('users').doc(uid).get();
+  var userDoc = await _firestore.collection('users').doc(emailId).get();
   print('---------------------7------------------');
   
   if (referralUsed.value) {
@@ -100,10 +100,10 @@ Future<void> addReferral(String referralId) async {
           .collection('users')
           .doc(referrerUid)
           .collection('referrals')
-          .doc(uid)
+          .doc(emailId)
           .set({
-        'username': userDoc.data()?['username'] ?? 'Anonymous',
-        'email': userDoc.data()?['email'] ?? 'N/A',
+        'username': userDoc.data()?['username'] ?? 'no data uploaded',
+        'email': userDoc.data()?['email'] ?? 'no data uploaded',
         'referredOn': DateTime.now(),
         'subReferrals': [],
       });
@@ -140,9 +140,9 @@ Future<void> addReferral(String referralId) async {
               .doc(referrerUid)
               .update({
             'subReferrals': FieldValue.arrayUnion([{
-              'userId': uid,
-              'username': userDoc.data()?['username'] ?? 'Anonymous',
-              'email': userDoc.data()?['email'] ?? 'N/A',
+              'userId': emailId,
+              'username': userDoc.data()?['username'] ?? 'no data uploaded',
+              'email': userDoc.data()?['email'] ?? 'no data uploaded',
               'referredOn': DateTime.now(),
             }]),
           });
@@ -152,7 +152,7 @@ Future<void> addReferral(String referralId) async {
       
       // Mark the current user as having used a referral code
       referralUsed.value = true;
-      await _firestore.collection('users').doc(uid).update({
+      await _firestore.collection('users').doc(emailId).update({
         'referralUsed': true,
         'referrerUid': referrerUid,
       });

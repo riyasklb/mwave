@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:mwave/auth/input_adreass_screen.dart';
 import 'package:mwave/auth/otp_screen.dart';
 
 import 'package:mwave/view/bottumbar1.dart';
@@ -202,21 +203,63 @@ Future<void> resendOtp(String phoneNumber, BuildContext context) async {
 }
 
   final GoogleSignIn _googleSignIn = GoogleSignIn();
-//  var isLoading = false.obs;
 
-  Future<void> loginWithGoogle() async {
-    try {
-     // isLoading.value = true;
-      final user = await _googleSignIn.signIn();
-      if (user != null) {
-        print('Google User: ${user.displayName}');
-        // Handle navigation or authentication logic here.
-      }
-    } catch (e) {
-      print('Error during Google Sign-In: $e');
-    } finally {
-    //  isLoading.value = false;
+
+
+Future<void> loginWithGoogle() async {
+  try {
+    // Trigger Google Sign-In
+    final googleUser = await _googleSignIn.signIn();
+
+    if (googleUser == null) {
+      print('Google Sign-In aborted');
+      return; // User canceled the sign-in
     }
+
+    // Get the Google authentication details
+    final googleAuth = await googleUser.authentication;
+
+    // Create Firebase credential with Google token
+    final AuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    // Sign in to Firebase with the Google credential
+    UserCredential userCredential =
+        await _auth.signInWithCredential(credential);
+
+    // Get the signed-in Firebase user
+    User? firebaseUser = userCredential.user;
+
+    if (firebaseUser != null) {
+      print('Firebase User: ${firebaseUser.displayName}, UID: ${firebaseUser.uid}');
+
+      // Check if the user's email is already in Firestore
+      QuerySnapshot userQuery = await _firestore
+          .collection('users') // Adjust this to your user collection
+          .where('username', isEqualTo: firebaseUser.displayName)
+          .get();
+print('=========================${firebaseUser.email}');
+print('=========================${userQuery.docs}');
+      if (userQuery.docs.isNotEmpty) {    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isRegistered', true);
+        // If the email already exists in Firestore, navigate to the Bottom Nav Bar
+        Get.offAll(() => BottumNavBar()); // Change this to your Bottom Navigation Bar screen
+      } else {
+        // If the email is not found, navigate to AddressAndPhoneCollectionScreen
+        Get.to(() => AddressAndPhoneCollectionScreen(
+          email: firebaseUser.email!,
+          photo: firebaseUser.photoURL,
+          username: firebaseUser.displayName,
+        ));
+      }
+    }
+  } catch (e) {
+    print('Error during Google Sign-In: $e');
   }
+}
+
+
 
 }

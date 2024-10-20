@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mwave/auth/login_screen.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
 import 'package:mwave/auth/onboard_screen.dart';
-import 'package:mwave/auth/register_screen.dart';
+
 import 'package:mwave/constants/colors.dart';
 import 'package:mwave/view/couces_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -95,50 +96,102 @@ class HomeScreen extends StatelessWidget {
                           // Navigate to Analytics screen
                         },
                       ),
-                     _buildDashboardCard(
-  context,
-  title: 'Log out',
-  icon: Icons.logout,
-  onTap: () async {
-    // Show confirmation dialog before logout
-    bool shouldLogout = await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text("Logout"),
-        content: Text("Are you sure you want to log out?"),
-        actions: [
-          TextButton(
-            child: Text("Cancel"),
-            onPressed: () {
-              Navigator.of(context).pop(false); // Return false to not log out
-            },
-          ),
-          TextButton(
-            child: Text("Logout"),
-            onPressed: () {
-              Navigator.of(context).pop(true); // Return true to proceed with logout
-            },
-          ),
-        ],
-      ),
-    );
+                _buildDashboardCard(
+            context,
+            title: 'Log out',
+            icon: Icons.logout,
+            onTap: () async {
+              bool shouldLogout = await showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text("Logout"),
+                  content: Text("Are you sure you want to log out?"),
+                  actions: [
+                    TextButton(
+                      child: Text("Cancel"),
+                      onPressed: () {
+                       Get.back();
+                      },
+                    ),
+                    TextButton(
+                      child: Text("Logout"),
+                      onPressed: () async{
+                         try {
+    print('---------------------- Starting logout');
 
-    if (shouldLogout == true) {
-      // Sign out from Firebase
-      await FirebaseAuth.instance.signOut();
-
-      // Clear SharedPreferences (or any other locally stored data)
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.clear();
-
-      // Optionally clear other local data if necessary
-      // For example: clear caches, reset state, etc.
-
-      // Navigate to the onboard screen
-      Get.offAll(() => OnboardScreen());  // Get.offAll to remove the back stack completely
+    // Sign out from Google if used
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+    if (await googleSignIn.isSignedIn()) {
+      await googleSignIn.signOut();
+      print('---------------------- Google sign-out successful');
     }
-  },
-),
+
+    // Sign out from Firebase
+    await FirebaseAuth.instance.signOut();
+    print('---------------------- Firebase sign-out successful');
+
+    // Clear all preferences
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    print('---------------------- SharedPreferences cleared');
+
+    // Navigate to Onboard Screen
+    Get.offAll(() => OnboardScreen());
+  } catch (e) {
+    print('---------------------- Logout failed: $e');
+  }
+                        Get.back();
+                      },
+                    ),
+                  ],
+                ),
+              );
+
+
+
+// Future<void> logoutUser() async {
+//   try {
+//     print('---------------------- Starting logout');
+
+//     // Sign out from Google if used
+//     final GoogleSignIn googleSignIn = GoogleSignIn();
+//     if (await googleSignIn.isSignedIn()) {
+//       await googleSignIn.signOut();
+//       print('---------------------- Google sign-out successful');
+//     }
+
+//     // Sign out from Firebase
+//     await FirebaseAuth.instance.signOut();
+//     print('---------------------- Firebase sign-out successful');
+
+//     // Clear all preferences
+//     SharedPreferences prefs = await SharedPreferences.getInstance();
+//     await prefs.clear();
+//     print('---------------------- SharedPreferences cleared');
+
+//     // Navigate to Onboard Screen
+//     Get.offAll(() => OnboardScreen());
+//   } catch (e) {
+//     print('---------------------- Logout failed: $e');
+//   }
+// }
+  // if (shouldLogout == true) {
+  //       print(
+  //         '----------------------${shouldLogout}'
+  //       );
+  //               await FirebaseAuth.instance.signOut();
+  //   print(
+  //         '----------------------${shouldLogout}'
+  //       );
+  //               SharedPreferences prefs = await SharedPreferences.getInstance();
+  //               await prefs.clear(); // Clear all saved preferences
+  //   print(
+  //         '----------------------${shouldLogout}'
+  //       );
+  //               Get.offAll(() => OnboardScreen());
+  //             }
+            },
+          ),
 
                     ],
                   ),

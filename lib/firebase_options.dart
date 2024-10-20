@@ -70,6 +70,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '202213371458',
     projectId: 'moneywave-884c2',
     storageBucket: 'moneywave-884c2.appspot.com',
+    androidClientId: '202213371458-htvlejjn8dqbiqtd0l4uinndu04lgl4m.apps.googleusercontent.com',
+    iosClientId: '202213371458-d5p9fktqiejin02mgrj5uil0v8pmu3ou.apps.googleusercontent.com',
     iosBundleId: 'com.example.mwave',
   );
 

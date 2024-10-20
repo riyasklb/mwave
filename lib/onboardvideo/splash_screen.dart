@@ -4,17 +4,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:mwave/auth/onboard_screen.dart';
-import 'package:mwave/constants/colors.dart';
 import 'package:mwave/view/bottumbar1.dart';
+import 'package:mwave/view/home_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:mwave/constants/colors.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
-    with SingleTickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -30,32 +30,29 @@ class _SplashScreenState extends State<SplashScreen>
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
     _controller.forward();
 
-    // Check user login status after the splash screen
-    _checkUserLoginStatus();
+  _navigateBasedOnRegistrationStatus();
   }
 
-  // Function to retrieve user id from shared preferences
-  Future<String?> _getUserIdFromPrefs() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('uid');
-  }
+  
+ Future<void> _navigateBasedOnRegistrationStatus() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      bool isRegistered = prefs.getBool('isRegistered') ?? false;
+      
 
-  // Check if the user is logged in and navigate accordingly
-  void _checkUserLoginStatus() async {
-    String? userId = await _getUserIdFromPrefs();
-    if (userId != null) {
-      print('User ID: $userId');
-      // If the user is logged in, navigate to the home screen
-      Future.delayed(Duration(seconds: 3), () {
-        Get.offAll(
-            () => BottumNavBar()); // Change this to your actual HomeScreen
-      });
-    } else {
-      print('No user logged in');
-      // If no user is logged in, navigate to the onboard screen
-      Future.delayed(Duration(seconds: 3), () {
-        Get.offAll(() => OnboardScreen()); // Navigate to Onboard_screen
-      });
+      // Simulate splash screen delay (optional)
+      await Future.delayed(const Duration(seconds: 2));
+ print(isRegistered);
+      if (isRegistered ) {
+        print(isRegistered);
+        // Navigate to Home Screen if registered
+        Get.off(() => BottumNavBar());
+      } else {
+        // Navigate to Onboard Screen if not registered
+        Get.off(() => OnboardScreen());
+      }
+    } catch (e) {
+      print('Error during splash screen navigation: $e');
     }
   }
 
@@ -74,14 +71,9 @@ class _SplashScreenState extends State<SplashScreen>
           opacity: _animation,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [ Lottie.asset('assets/images/Animation - 1729157358008.json'),
-              // App Logo (replace with your actual logo asset)
-              // Icon(
-              //   Icons.attach_money, // Placeholder for logo
-              //   size: 100.w,
-              //   color: Colors.white,
-              // ),
-            //  SizedBox(height: 20.h),
+            children: [
+              Lottie.asset('assets/images/Animation - 1729157358008.json'), // Lottie animation
+              SizedBox(height: 20.h),
 
               // App Name
               Text(
@@ -93,7 +85,7 @@ class _SplashScreenState extends State<SplashScreen>
                 ),
               ),
 
-              // Tagline
+              // Optional Tagline (commented out)
               // Text(
               //   'Manage your finances effortlessly',
               //   style: GoogleFonts.poppins(
