@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:mwave/constants/colors.dart';
 
@@ -24,41 +25,37 @@ class _ShareReferralScreenState extends State<ShareReferralScreen> {
     fetchReferralCode();
   }
 
+  Future<void> fetchReferralCode() async {
+    try {
+      String? emailId = FirebaseAuth.instance.currentUser?.email;
 
+      if (emailId == null) {
+        throw Exception('User not logged in');
+      }
 
-Future<void> fetchReferralCode() async {
-  try {
-    // Get the current user ID
-    String? emailId = FirebaseAuth.instance.currentUser?.email;
+      var documentSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(emailId)
+          .get();
 
-    if (emailId == null) {
-      throw Exception('User not logged in');
-    }
-
-    // Fetch the referralId for the logged-in user
-    var documentSnapshot = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(emailId)
-        .get();
-
-    if (documentSnapshot.exists) {
+      if (documentSnapshot.exists) {
+        setState(() {
+          referralCode = documentSnapshot['referralId'] ?? 'No Referral Code';
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          referralCode = 'No Referral Code Available';
+          isLoading = false;
+        });
+      }
+    } catch (e) {
       setState(() {
-        referralCode = documentSnapshot['referralId'] ?? 'No Referral Code';
         isLoading = false;
       });
-    } else {
-      setState(() {
-        referralCode = 'No Referral Code Available';
-        isLoading = false;
-      });
+      print('Error fetching referral code: $e');
     }
-  } catch (e) {
-    setState(() {
-      isLoading = false;
-    });
-    print('Error fetching referral code: $e');
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +74,9 @@ Future<void> fetchReferralCode() async {
       body: Padding(
         padding: EdgeInsets.all(24.0.sp),
         child: isLoading
-            ? Center(child: CircularProgressIndicator())
+            ? Center(
+                child: CircularProgressIndicator()
+              )
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -89,7 +88,10 @@ Future<void> fetchReferralCode() async {
                       fontWeight: FontWeight.w600,
                       color: kwhite,
                     ),
-                  ),
+                  ),Lottie.asset(
+                  'assets/images/Animation - 1729258714951.json',
+                 
+                ),
                   SizedBox(height: 20.h),
                   _buildReferralCodeDisplay(),
                   SizedBox(height: 40.h),
@@ -143,6 +145,7 @@ Future<void> fetchReferralCode() async {
           label: Text('Share Code'),
           onPressed: () {
             Share.share('$referralCode');
+            _showShareSuccessAnimation();
           },
           style: ElevatedButton.styleFrom(
             padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 12.h),
@@ -156,7 +159,7 @@ Future<void> fetchReferralCode() async {
           icon: Icon(Icons.close),
           label: Text('Cancel'),
           onPressed: () {
-            Navigator.pop(context); // Close the screen
+            Navigator.pop(context);
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.grey,
@@ -174,6 +177,23 @@ Future<void> fetchReferralCode() async {
     Clipboard.setData(ClipboardData(text: code));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Referral Code Copied!')),
+    );
+  }
+
+  void _showShareSuccessAnimation() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Lottie.asset(
+            'assets/images/Animation - 1729258714951.json',
+            width: 200.w,
+            height: 200.h,
+            repeat: false,
+          ),
+        );
+      },
     );
   }
 }

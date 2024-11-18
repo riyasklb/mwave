@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lottie/lottie.dart';
+
 import 'package:mwave/constants/colors.dart';
 import 'package:mwave/controllers/referal_controller.dart';
-import 'package:mwave/model/referal_model.dart';
+
 import 'package:mwave/view/bottumbar1.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 

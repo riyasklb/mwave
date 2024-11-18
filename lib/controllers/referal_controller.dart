@@ -1,9 +1,11 @@
-import 'dart:ffi';
+
 
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mwave/model/referal_model.dart';
+
+
 
 class ReferralController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;

@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:delightful_toast/delight_toast.dart';
 import 'package:delightful_toast/toast/components/toast_card.dart';
 import 'package:delightful_toast/toast/utils/enums.dart';
@@ -6,19 +6,22 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:mwave/auth/input_adreass_screen.dart';
-import 'package:mwave/auth/otp_screen.dart';
+import 'package:mwave/auth/onboard_screen.dart';
 
-import 'package:mwave/view/bottumbar1.dart';
+
+
+
+
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthController extends GetxController {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  
+
+
   var isLoading = false.obs; // Observable loading state
 
-  void showToast(BuildContext context, { 
+  void showToast(
+    BuildContext context, {
     required String text,
     IconData icon = Icons.info,
   }) {
@@ -47,219 +50,45 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<bool> isPhoneNumberRegistered(String phoneNumber) async {
-    try {
-      final querySnapshot = await _firestore
-          .collection('users')
-          .where('phone', isEqualTo: phoneNumber)
-          .get();
-      return querySnapshot.docs.isNotEmpty;
-    } catch (e) {
-      print('Error checking phone number: $e');
-      return false;
-    }
-  }
 
-  void loginWithPhoneNumber(String phoneNumber, BuildContext context) async {
-    if (phoneNumber.isEmpty || phoneNumber.length < 10) {
-      showToast(context, text: 'Enter a valid phone number', icon: Icons.error);
-      return;
+
+
+
+Future<void> logoutUser(BuildContext context) async {
+  try {
+    print('---------------------- Starting logout');
+
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+    if (await googleSignIn.isSignedIn()) {
+      await googleSignIn.signOut();
+      print('---------------------- Google sign-out successful');
     }
 
-    isLoading.value = true;
-    String phoneNumberWithPrefix = '+91' + phoneNumber.trim(); // For OTP verification
+    await FirebaseAuth.instance.signOut();
+    print('---------------------- Firebase sign-out successful');
 
-    bool isRegistered = await isPhoneNumberRegistered(phoneNumber); // Check without prefix
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    print('---------------------- SharedPreferences cleared');
 
-    if (isRegistered) {
-      try {
-        await _auth.verifyPhoneNumber(
-          phoneNumber: phoneNumberWithPrefix,
-          timeout: const Duration(seconds: 60),
-          verificationCompleted: (PhoneAuthCredential credential) async {
-            await _auth.signInWithCredential(credential);
-            isLoading.value = false;
-            await checkUserByPhoneNumber(phoneNumber); // Check without prefix
-          },
-          verificationFailed: (FirebaseAuthException e) {
-            isLoading.value = false;
-            showToast(context, text: 'Verification failed: ${e.message}', icon: Icons.error);
-          },
-          codeSent: (String verificationId, int? resendToken) {
-            isLoading.value = false;
-            showToast(context, text: 'OTP sent to your phone', icon: Icons.check);
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => OtpPage(
-                  phoneNumber: phoneNumber,
-                  verificationId: verificationId,
-                ),
-              ),
-            );
-          },
-          codeAutoRetrievalTimeout: (String verificationId) {},
-        );
-      } catch (e) {
-        isLoading.value = false;
-        showToast(context, text: 'Error: ${e.toString()}', icon: Icons.error);
-      }
+    // Optionally wait for a moment before checking the user state
+    await Future.delayed(Duration(seconds: 1));
+
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) {
+      print('User is logged out successfully.');
     } else {
-      isLoading.value = false;
-      showToast(context, text: 'This phone number is not registered', icon: Icons.error);
+      print('User is still logged in: ${currentUser.uid}');
     }
-  }
 
-  Future<void> verifyOtp(String verificationId, String otp) async {
-    try {
-      PhoneAuthCredential credential = PhoneAuthProvider.credential(
-        verificationId: verificationId,
-        smsCode: otp,
-      );
-
-      UserCredential userCredential = await _auth.signInWithCredential(credential);
-      showToast(Get.context!, text: 'User logged in successfully!', icon: Icons.check);
-      
-      await checkUserByPhoneNumber(userCredential.user?.phoneNumber?.replaceFirst('+91', '') ?? ''); // Check without prefix
-    } catch (e) {
-      showToast(Get.context!, text: 'OTP verification failed: $e', icon: Icons.error);
-      throw e; // Rethrow the exception to handle it in the calling method if needed
-    }
-  }
-
- Future<void> checkUserByPhoneNumber(String phoneNumber) async {
-    try {
-      QuerySnapshot querySnapshot = await _firestore
-          .collection('users')
-          .where('phone', isEqualTo: phoneNumber)
-          .get();
-
-      if (querySnapshot.docs.isNotEmpty) {
-        DocumentSnapshot userDoc = querySnapshot.docs.first;
-        String userId = userDoc.id;
-        await saveUserIdToPrefs(userId);
-        showToast(Get.context!, text: 'User found and logged in successfully!', icon: Icons.check);
-        
-        Get.offAll(BottumNavBar());
-      } else {
-        showToast(Get.context!, text: 'No account found with this phone number.', icon: Icons.error);
-      }
-    } catch (e) {
-      showToast(Get.context!, text: 'Error fetching user details: $e', icon: Icons.error);
-    }
-  }
-
-  Future<void> saveUserIdToPrefs(String userId) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('uid', userId);
-  }
-
-Future<void> resendOtp(String phoneNumber, BuildContext context) async {
-  if (phoneNumber.isEmpty || phoneNumber.length < 10) {
-    showToast(context, text: 'Enter a valid phone number', icon: Icons.error);
-    return;
-  }
-
-  isLoading.value = true; // Start loading
-
-  try {
-    await _auth.verifyPhoneNumber(
-      phoneNumber: '+91$phoneNumber', // Add country code for India
-      timeout: const Duration(seconds: 60),
-      verificationCompleted: (PhoneAuthCredential credential) async {
-        // Automatically sign in if the verification is successful
-        await _auth.signInWithCredential(credential);
-        isLoading.value = false; // Stop loading
-        showToast(context, text: 'User logged in successfully!', icon: Icons.check);
-        await checkUserByPhoneNumber(phoneNumber); // Check without prefix
-      },
-      verificationFailed: (FirebaseAuthException e) {
-        isLoading.value = false; // Stop loading
-        showToast(context, text: 'Failed to resend OTP: ${e.message}', icon: Icons.error);
-      },
-      codeSent: (String verificationId, int? resendToken) {
-        isLoading.value = false; // Stop loading
-        showToast(context, text: 'OTP resent successfully!', icon: Icons.check);
-        // Optionally navigate to OTP verification page if needed
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => OtpPage(
-              phoneNumber: phoneNumber,
-              verificationId: verificationId,
-            ),
-          ),
-        );
-      },
-      codeAutoRetrievalTimeout: (String verificationId) {
-        // Handle auto-retrieval timeout if needed
-        isLoading.value = false; // Stop loading
-      },
-    );
+    Get.offAll(() => OnboardScreen());update();
   } catch (e) {
-    isLoading.value = false; // Stop loading
-    showToast(context, text: 'Error: ${e.toString()}', icon: Icons.error);
+    print('---------------------- Logout failed: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Logout failed: $e')),
+    );
   }
 }
-
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
-
-
-
-Future<void> loginWithGoogle() async {
-  try {
-    // Trigger Google Sign-In
-    final googleUser = await _googleSignIn.signIn();
-
-    if (googleUser == null) {
-      print('Google Sign-In aborted');
-      return; // User canceled the sign-in
-    }
-
-    // Get the Google authentication details
-    final googleAuth = await googleUser.authentication;
-
-    // Create Firebase credential with Google token
-    final AuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    // Sign in to Firebase with the Google credential
-    UserCredential userCredential =
-        await _auth.signInWithCredential(credential);
-
-    // Get the signed-in Firebase user
-    User? firebaseUser = userCredential.user;
-
-    if (firebaseUser != null) {
-      print('Firebase User: ${firebaseUser.displayName}, UID: ${firebaseUser.uid}');
-
-      // Check if the user's email is already in Firestore
-      QuerySnapshot userQuery = await _firestore
-          .collection('users') // Adjust this to your user collection
-          .where('username', isEqualTo: firebaseUser.displayName)
-          .get();
-print('=========================${firebaseUser.email}');
-print('=========================${userQuery.docs}');
-      if (userQuery.docs.isNotEmpty) {    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isRegistered', true);
-        // If the email already exists in Firestore, navigate to the Bottom Nav Bar
-        Get.offAll(() => BottumNavBar()); // Change this to your Bottom Navigation Bar screen
-      } else {
-        // If the email is not found, navigate to AddressAndPhoneCollectionScreen
-        Get.to(() => AddressAndPhoneCollectionScreen(
-          email: firebaseUser.email!,
-          photo: firebaseUser.photoURL,
-          username: firebaseUser.displayName,
-        ));
-      }
-    }
-  } catch (e) {
-    print('Error during Google Sign-In: $e');
-  }
-}
-
 
 
 }

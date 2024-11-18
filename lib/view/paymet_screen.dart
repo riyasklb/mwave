@@ -116,21 +116,19 @@ class _PaymentPageState extends State<PaymentPage> {
     razorpay.open(options);
   }
 
-  // Handle Payment Success
-// Handle Payment Success
 void handlePaymentSuccessResponse(PaymentSuccessResponse response) async {
   try {
     // Get the current user's UID
     var currentUser = FirebaseAuth.instance.currentUser;
 
     if (currentUser != null) {
-      String uid = currentUser.uid;
+      String? emailId = currentUser.email;
 
-      // Store payment details in the current user's Firestore document
+      // Store payment details in the user's Firestore payments subcollection
       await FirebaseFirestore.instance
           .collection('users')
-          .doc(uid) // User's UID
-          .collection('payments') // Subcollection for payments
+          .doc(emailId) // Use email as document ID
+          .collection('payments')
           .add({
         'orderId': response.orderId,
         'paymentId': response.paymentId,
@@ -138,24 +136,36 @@ void handlePaymentSuccessResponse(PaymentSuccessResponse response) async {
         'amount': 100, // Amount in INR
         'timestamp': Timestamp.now(), // Current timestamp
       });
-  authController.showToast(context,
-          text: 'Payment Successful", "Payment ID: ${response.paymentId}',
-          icon: Icons.check,
-        );
-     // showAlertDialog(context, "Payment Successful", "Payment ID: ${response.paymentId}");
+
+      // Update payment status in the user's main document
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(emailId)
+          .update({'paymentStatus': true});
+
+      // Show success message using your AuthController
+      authController.showToast(
+        context,
+        text: 'Payment Successful\nPayment ID: ${response.paymentId}',
+        icon: Icons.check,
+      );
+
+      // Navigate to the ReferralScreen after payment success
       Get.offAll(ReferralScreen());
     } else {
-       authController.showToast(context,
-          text: '"Error", "No user is currently logged in."',
-          icon: Icons.error,
-        );
-    //  showAlertDialog(context, "Error", "No user is currently logged in.");
+      // If the user is not logged in, show an error message
+      authController.showToast(
+        context,
+        text: 'Error\nNo user is currently logged in.',
+        icon: Icons.error,
+      );
     }
   } catch (e) {
     print('Error storing payment details: $e');
     showAlertDialog(context, "Error", "Failed to store payment details.");
   }
 }
+
 
   // Handle Payment Error
   void handlePaymentErrorResponse(PaymentFailureResponse response) {
