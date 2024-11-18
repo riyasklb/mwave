@@ -60,88 +60,102 @@ class MyReferalsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildReferralList(ReferralController controller) {
-    return ListView.builder(
-      itemCount: controller.referrals.length,
-      itemBuilder: (context, index) {
-        final referral = controller.referrals[index];
-
-        return Card(
-          margin: EdgeInsets.symmetric(vertical: 8.0.sp, horizontal: 16.0.sp), // Use ScreenUtil for margins
-          child: ListTile(
-            contentPadding: EdgeInsets.all(16.0.sp), // Use ScreenUtil for padding
-            leading: CircleAvatar(
-              child: Text(referral.username[0].toUpperCase()), // Capitalize the first letter
-            ),
-            title: Text(
-              _capitalizeFirstLetter(referral.username), // Capitalize the first letter of the username
-              style: GoogleFonts.poppins(
-                fontSize: 18.sp, // Responsive font size
-                fontWeight: FontWeight.w500,
-                color: Colors.black, // Adjust color as needed
-              ),
-            ),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  referral.email,
-                  style: GoogleFonts.poppins(
-                    fontSize: 14.sp, // Responsive font size
-                    color: Colors.black54, // Adjust color as needed
-                  ),
-                ),
-                const SizedBox(height: 4.0),
-                Text(
-                  "Referred on: ${DateFormat('yyyy-MM-dd').format(referral.referredOn)}",
-                  style: GoogleFonts.poppins(
-                    fontSize: 12.sp, // Responsive font size
-                    color: Colors.grey,
-                  ),
-                ),
-                const SizedBox(height: 8.0),
-                referral.subReferrals.isNotEmpty
-                    ? ExpansionTile(
-                        title: Text(
-                          "Sub-referrals",
-                          style: GoogleFonts.poppins(
-                            fontSize: 16.sp, // Responsive font size
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black,
-                          ),
-                        ),
-                        children: referral.subReferrals.map((subReferral) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                            child: ListTile(
-                              leading: const Icon(Icons.arrow_right),
-                              title: Text(
-                                _capitalizeFirstLetter(subReferral.username), // Capitalize the first letter of sub-referral username
-                                style: GoogleFonts.poppins(
-                                  fontSize: 16.sp, // Responsive font size
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              subtitle: Text(
-                                "Referred on: ${DateFormat('yyyy-MM-dd').format(subReferral.referredOn)}",
-                                style: GoogleFonts.poppins(
-                                  fontSize: 12.sp, // Responsive font size
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                      )
-                    : const SizedBox(),
-              ],
-            ),
-          ),
-        );
-      },
+Widget _buildReferralList(ReferralController controller) {
+  if (controller.referrals.isEmpty) {
+    return Center(
+      child: Text(
+        "No referrals found",
+        style: GoogleFonts.poppins(
+          fontSize: 18.sp, // Responsive font size
+          fontWeight: FontWeight.w500,
+          color: Colors.white, // Adjust color as needed
+        ),
+      ),
     );
   }
+
+  return ListView.builder(
+    itemCount: controller.referrals.length,
+    itemBuilder: (context, index) {
+      final referral = controller.referrals[index];
+
+      return Card(
+        margin: EdgeInsets.symmetric(vertical: 8.0.sp, horizontal: 16.0.sp), // Use ScreenUtil for margins
+        child: ListTile(
+          contentPadding: EdgeInsets.all(16.0.sp), // Use ScreenUtil for padding
+          leading: CircleAvatar(
+            child: Text(referral.username[0].toUpperCase()), // Capitalize the first letter
+          ),
+          title: Text(
+            _capitalizeFirstLetter(referral.username), // Capitalize the first letter of the username
+            style: GoogleFonts.poppins(
+              fontSize: 18.sp, // Responsive font size
+              fontWeight: FontWeight.w500,
+              color: Colors.black, // Adjust color as needed
+            ),
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                referral.email,
+                style: GoogleFonts.poppins(
+                  fontSize: 14.sp, // Responsive font size
+                  color: Colors.black54, // Adjust color as needed
+                ),
+              ),
+              const SizedBox(height: 4.0),
+              Text(
+                "Referred on: ${DateFormat('yyyy-MM-dd').format(referral.referredOn)}",
+                style: GoogleFonts.poppins(
+                  fontSize: 12.sp, // Responsive font size
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 8.0),
+              referral.subReferrals.isNotEmpty
+                  ? ExpansionTile(
+                      title: Text(
+                        "Sub-referrals",
+                        style: GoogleFonts.poppins(
+                          fontSize: 16.sp, // Responsive font size
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                        ),
+                      ),
+                      children: referral.subReferrals.map((subReferral) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: ListTile(
+                            leading: const Icon(Icons.arrow_right),
+                            title: Text(
+                              _capitalizeFirstLetter(subReferral.username), // Capitalize the first letter of sub-referral username
+                              style: GoogleFonts.poppins(
+                                fontSize: 16.sp, // Responsive font size
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                              ),
+                            ),
+                            subtitle: Text(
+                              "Referred on: ${DateFormat('yyyy-MM-dd').format(subReferral.referredOn)}",
+                              style: GoogleFonts.poppins(
+                                fontSize: 12.sp, // Responsive font size
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    )
+                  : const SizedBox(),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
 
   String _capitalizeFirstLetter(String text) {
     if (text.isEmpty) return text; // Return empty if the text is empty

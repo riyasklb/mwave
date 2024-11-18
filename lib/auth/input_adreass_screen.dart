@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,8 +9,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mwave/auth/onboard_screen.dart';
 import 'package:mwave/constants/colors.dart';
 import 'package:mwave/onboardvideo/video_scree.dart';
-import 'package:mwave/view/bottumbar1.dart';
-import 'package:mwave/view/paymet_screen.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AddressAndPhoneCollectionScreen extends StatefulWidget {
@@ -174,8 +174,17 @@ class _AddressAndPhoneCollectionScreenState extends State<AddressAndPhoneCollect
                     ),
                     SizedBox(height: 16.h),
                     _buildTextField('Address', _addressController),
-                    _buildTextField('Phone Number', _phoneController,
-                        keyboardType: TextInputType.phone),
+                    _buildTextField(
+  'Phone Number',
+  _phoneController,
+  keyboardType: TextInputType.phone,
+  inputFormatters: [
+    FilteringTextInputFormatter.digitsOnly, // Allows only numeric input
+    LengthLimitingTextInputFormatter(10),  // Limits input to 10 characters
+  ],
+),
+
+              
                     _buildTextField('Place', _placeController),
                     SizedBox(height: 16.h),
                     Text(
@@ -279,34 +288,36 @@ class _AddressAndPhoneCollectionScreenState extends State<AddressAndPhoneCollect
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller,
-      {TextInputType keyboardType = TextInputType.text}) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.h),
-      child: TextField(
-        controller: controller,
-        keyboardType: keyboardType,
-        decoration: InputDecoration(
-          labelText: label,
-          filled: true,
-          fillColor: Colors.white.withOpacity(0.8),
-          contentPadding:
-              EdgeInsets.symmetric(vertical: 16.h, horizontal: 20.w),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30.r), // Circular border
-            borderSide: BorderSide.none, // Removes the default border
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30.r),
-            borderSide: BorderSide(color: Colors.grey.shade400, width: 1),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30.r),
-            borderSide: BorderSide(color: kblue, width: 2),
-          ),
+Widget _buildTextField(String label, TextEditingController controller,
+    {TextInputType keyboardType = TextInputType.text, List<TextInputFormatter>? inputFormatters}) {
+  return Padding(
+    padding: EdgeInsets.symmetric(vertical: 8.h),
+    child: TextField(
+      controller: controller,
+      keyboardType: keyboardType,
+      inputFormatters: inputFormatters, // Add input formatters here
+      decoration: InputDecoration(
+        labelText: label,
+        filled: true,
+        fillColor: Colors.white.withOpacity(0.8),
+        contentPadding:
+            EdgeInsets.symmetric(vertical: 16.h, horizontal: 20.w),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30.r), // Circular border
+          borderSide: BorderSide.none, // Removes the default border
         ),
-        style: TextStyle(fontSize: 16.sp),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30.r),
+          borderSide: BorderSide(color: Colors.grey.shade400, width: 1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30.r),
+          borderSide: BorderSide(color: kblue, width: 2),
+        ),
       ),
-    );
-  }
+      style: TextStyle(fontSize: 16.sp),
+    ),
+  );
+}
+
 }

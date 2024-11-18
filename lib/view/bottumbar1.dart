@@ -6,6 +6,7 @@ import 'package:mwave/constants/colors.dart';
 import 'package:mwave/view/home_screen.dart';
 import 'package:mwave/view/history_screeen.dart';
 import 'package:mwave/view/menu_screen.dart';
+
 import 'package:mwave/view/referals.dart';
 import 'package:mwave/view/wallet_screen.dart';
 
