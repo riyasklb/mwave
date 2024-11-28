@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mwave/constants/colors.dart';
+import 'package:mwave/desclimer/desclimer_screen.dart';
 import 'package:mwave/view/profile_screen.dart';
 import 'package:mwave/view/referal_screen.dart';
 import 'package:mwave/view/refund_and_policy.dart';
@@ -79,6 +80,8 @@ class MenuScreen extends StatelessWidget {
                   icon: Icons.description,
                   label: 'Terms and Conditions',
                   onTap: () {
+
+               //     Get.to(DisclaimerPage());
                     // Navigate to Terms and Conditions screen
                   },
                 ),

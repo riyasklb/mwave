@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lottie/lottie.dart';
 import 'package:mwave/auth/login_screen.dart';
 import 'package:mwave/constants/colors.dart';
 
@@ -27,19 +28,19 @@ class _OnboardScreenState extends State<OnboardScreen> {
         },
         children: [
           _buildOnboardPage(
-            image: 'assets/images/WhatsApp Image 2024-10-03 at 2.50.54 PM(1).jpeg',
+            image: 'assets/images/Animation - 1731992642948.json',
             title: 'Welcome to Money Wave',
             description: 'Your personal finance manager',
             isLastPage: false,
           ),
           _buildOnboardPage(
-            image: 'assets/images/rb_7121.png',
+            image: 'assets/images/Animation - 1731995487234.json',
             title: 'Track Your Expenses',
             description: 'Get real-time insights on your spending',
             isLastPage: false,
           ),
           _buildOnboardPage(
-            image: 'assets/images/rb_7121.png',
+            image: 'assets/images/Animation - 1731991731436.json',
             title: 'Ready to Begin?',
             description: 'Swipe left or tap to log in!',
             isLastPage: true,
@@ -72,11 +73,15 @@ class _OnboardScreenState extends State<OnboardScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+
+
+       Lottie.asset(image),
+
               // Image
-              CircleAvatar(
-                radius: 140.r, // Responsive size
-                backgroundImage: AssetImage(image),
-              ),
+              // CircleAvatar(
+              //   radius: 140.r, // Responsive size
+              //   backgroundImage: AssetImage(image),
+              // ),
               SizedBox(height: 40.h),
 
               // Title

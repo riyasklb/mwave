@@ -4,10 +4,12 @@ import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_not
 import 'package:flutter/material.dart';
 import 'package:mwave/constants/colors.dart';
 import 'package:mwave/view/home_screen.dart';
-import 'package:mwave/view/history_screeen.dart';
+
 import 'package:mwave/view/menu_screen.dart';
 
 import 'package:mwave/view/referals.dart';
+import 'package:mwave/view/branding/social_media_branding_screen.dart';
+import 'package:mwave/view/share_referal_screen.dart';
 import 'package:mwave/view/wallet_screen.dart';
 
 
@@ -40,8 +42,9 @@ class _BottumNavBarState extends State<BottumNavBar> {
   Widget build(BuildContext context) {
     final List<Widget> bottomBarPages = [
       HomeScreen(),
-      const HistoryScreeen(),
-      MyReferalsScreen(),
+      const SocialMediaBrandingScreen(),
+      ShareReferralScreen(),
+    //  MyReferalsScreen(),
       WalletScreen(),
       const MenuScreen(),
     ];

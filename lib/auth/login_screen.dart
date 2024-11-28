@@ -100,7 +100,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
              // SizedBox(height: 60.h),
-              SizedBox(height: 16.h),
+              SizedBox(height: 16.h),kheight40,
               _buildGoogleLoginButton(context),
             ],
           ),
@@ -111,7 +111,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildLottieAnimation() {
     return SizedBox(
-      height: 200.h,
+    //  height: 200.h,
       child: Lottie.asset(lottielogingif),
     );
   }

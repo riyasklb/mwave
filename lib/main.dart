@@ -8,6 +8,7 @@ import 'package:mwave/constants/colors.dart';
 
 import 'package:mwave/controllers/referal_controller.dart';
 import 'package:mwave/firebase_options.dart';
+import 'package:mwave/onboardvideo/splash_initial.dart';
 import 'package:mwave/onboardvideo/splash_screen.dart';
 import 'controllers/auth_controller.dart';
 
@@ -76,6 +77,6 @@ class MyApp extends StatelessWidget {
                 ),
               ),
             ),
-            home: SplashScreen()));
+            home: VideoplashScreen()));
   }
 }
