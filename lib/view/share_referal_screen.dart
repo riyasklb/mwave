@@ -66,8 +66,9 @@ class _ShareReferralScreenState extends State<ShareReferralScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: AppBar(leading: InkWell(onTap: (){Get.back();},
-        child: Icon(Icons.arrow_back,color: kwhite,)),
+      appBar: AppBar(
+        // leading: InkWell(onTap: (){Get.back();},
+        // child: Icon(Icons.arrow_back,color: kwhite,)),
         title: Text(
           'Share Referral Code',
           style: GoogleFonts.poppins(

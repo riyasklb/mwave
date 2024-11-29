@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lottie/lottie.dart';
+import 'package:mwave/auth/auth_link/signup_screen.dart';
 import 'package:mwave/auth/input_adreass_screen.dart';
 import 'package:mwave/constants/colors.dart';
 import 'package:mwave/controllers/auth_controller.dart';
@@ -90,13 +91,19 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildLottieAnimation(),kheight10,kheight10,
-              Text(
-                'Sign in with google',
-                style: GoogleFonts.poppins(
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.w600,
-                  color: kblue,
+              _buildLottieAnimation(),kheight10,kheight10,kheight40,
+              InkWell(onTap: (){Get.to(SignupScreen());},
+                child: Row(mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Sign in with Link   ',
+                      style: GoogleFonts.poppins(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.w600,
+                        color: kblue,
+                      ),
+                    ),
+                Icon(Icons.arrow_forward,color: kblue,)  ],
                 ),
               ),
              // SizedBox(height: 60.h),
