@@ -31,7 +31,7 @@ class _VideoplashScreenState extends State<VideoplashScreen> {
       });
 
     // Navigate to next screen after 5 seconds
-    Future.delayed(const Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 5), () {
       Get.offAll(SplashScreen());
  
     });
@@ -47,7 +47,7 @@ class _VideoplashScreenState extends State<VideoplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
-        fit: StackFit.expand,
+        //fit: StackFit.expand,
         children: [
           // Video background
           _videoController.value.isInitialized

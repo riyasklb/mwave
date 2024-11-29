@@ -1,8 +1,9 @@
 import 'dart:async';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:mwave/auth/auth_link/auth_service.dart';
 import 'package:mwave/auth/input_adreass_screen.dart';
 
@@ -79,34 +80,62 @@ class _VerifyhomeState extends State<Verifyhome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Align(
-        alignment: Alignment.center,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              "Email Verification",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              "We’ve sent a verification link to your email. Please check your inbox and verify your email address.",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: isResending
-                  ? null // Disable button while resending
-                  : resendEmailVerification,
-              child: isResending
-                  ? const CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    )
-                  : const Text("Resend Verification Email"),
-            ),
-          ],
+      backgroundColor: Colors.blue.shade50, // Background color for the screen
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 25.w),
+        child: Align(
+          alignment: Alignment.center,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Email Verification",
+                style: GoogleFonts.poppins(
+                  fontSize: 24.sp, // Responsive font size using ScreenUtil
+                  fontWeight: FontWeight.w600,
+                  color: Colors.blue.shade800,
+                ),
+              ),
+              SizedBox(height: 20.h),
+              Text(
+                "We’ve sent a verification link to your email. Please check your inbox and verify your email address.",
+                textAlign: TextAlign.center,
+                style: GoogleFonts.poppins(
+                  fontSize: 16.sp, // Responsive font size using ScreenUtil
+                  color: Colors.grey[700],
+                ),
+              ),
+              SizedBox(height: 20.h),
+              ElevatedButton(
+                onPressed: isResending
+                    ? null // Disable button while resending
+                    : resendEmailVerification,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  padding: EdgeInsets.symmetric(vertical: 15.h),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                ),
+                child: isResending
+                    ? const CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      )
+                    : Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Text(
+                          "Resend Verification Email",
+                          style: GoogleFonts.poppins(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
+                          ),
+                        ),
+                    ),
+              ),
+            ],
+          ),
         ),
       ),
     );

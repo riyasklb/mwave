@@ -90,7 +90,7 @@ class _AddressAndPhoneCollectionScreenState extends State<AddressAndPhoneCollect
       _addressController.clear();
       _phoneController.clear();
       _placeController.clear();
-      Get.to(VideoSelectionScreen());
+      Get.offAll(VideoSelectionScreen());
       setState(() {
         isLoading=false;
       });

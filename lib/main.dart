@@ -10,6 +10,7 @@ import 'package:mwave/controllers/referal_controller.dart';
 import 'package:mwave/firebase_options.dart';
 import 'package:mwave/onboardvideo/splash_initial.dart';
 import 'package:mwave/onboardvideo/splash_screen.dart';
+import 'package:mwave/onboardvideo/video_scree.dart';
 import 'controllers/auth_controller.dart';
 
 void main() async {
@@ -77,6 +78,6 @@ class MyApp extends StatelessWidget {
                 ),
               ),
             ),
-            home: VideoplashScreen()));
+            home: VideoSelectionScreen()));
   }
 }

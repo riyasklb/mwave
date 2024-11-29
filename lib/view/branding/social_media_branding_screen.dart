@@ -8,44 +8,6 @@ import 'package:mwave/view/branding/pdf_view_screen.dart';
 class SocialMediaBrandingScreen extends StatelessWidget {
   const SocialMediaBrandingScreen({Key? key}) : super(key: key);
 
-  // Social Media Tile Widget
-  Widget _socialMediaTile({
-    required IconData icon,
-    required String title,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: EdgeInsets.symmetric(vertical: 10.h),
-        padding: EdgeInsets.all(16.r),
-        decoration: BoxDecoration(
-          color: kwhite,
-          borderRadius: BorderRadius.circular(12.r),
-        ),
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: 30.r,
-              backgroundColor: color,
-              child: Icon(icon, color: Colors.white, size: 28.sp),
-            ),
-            SizedBox(width: 16.w),
-            Text(
-              title,
-              style: GoogleFonts.poppins(
-                fontSize: 20.sp,
-                fontWeight: FontWeight.w600,
-                color: kblue,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   // Video Tile Widget
   Widget _videoTile({
     required String thumbnail,
@@ -68,26 +30,88 @@ class SocialMediaBrandingScreen extends StatelessWidget {
             ),
           ],
         ),
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Instagram-like Header (Profile image and username)
+            Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(30.r),
+                  child: Image.network(
+                    'https://randomuser.me/api/portraits/men/1.jpg', // Replace with the profile image URL
+                    height: 30.h,
+                    width: 30.w,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                SizedBox(width: 8.w),
+                Text(
+                  'Username', // Replace with the actual username
+                  style: GoogleFonts.poppins(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 8.h),
+
+            // Video Thumbnail
             ClipRRect(
               borderRadius: BorderRadius.circular(8.r),
               child: Image.network(
                 thumbnail,
-                height: 60.h,
-                width: 100.w,
+                height: 200.h, // Adjust height as needed
+                width: double.infinity,
                 fit: BoxFit.cover,
               ),
             ),
-            SizedBox(width: 16.w),
-            Expanded(
-              child: Text(
-                title,
-                style: GoogleFonts.poppins(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w600,
+            SizedBox(height: 12.h),
+
+            // Action Buttons (Like, Comment, Share)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      FontAwesomeIcons.heart,
+                      size: 20.sp,
+                      color: Colors.black87,
+                    ),
+                    SizedBox(width: 16.w),
+                    Icon(
+                      FontAwesomeIcons.comment,
+                      size: 20.sp,
+                      color: Colors.black87,
+                    ),
+                    SizedBox(width: 16.w),
+                    Icon(
+                      FontAwesomeIcons.share,
+                      size: 20.sp,
+                      color: Colors.black87,
+                    ),
+                  ],
+                ),
+                // Add a "Save" Icon (Optional)
+                Icon(
+                  FontAwesomeIcons.bookmark,
+                  size: 20.sp,
                   color: Colors.black87,
                 ),
+              ],
+            ),
+            SizedBox(height: 8.h),
+
+            // Title/Description Text
+            Text(
+              title,
+              style: GoogleFonts.poppins(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
               ),
             ),
           ],
@@ -100,9 +124,11 @@ class SocialMediaBrandingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+        width: double.infinity,
+        height: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color.fromARGB(255, 74, 87, 198), kblue],
+            colors: [kblue, Color.fromARGB(255, 247, 244, 247)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -130,55 +156,60 @@ class SocialMediaBrandingScreen extends StatelessWidget {
                     color: Colors.white70,
                   ),
                 ),
-                SizedBox(height: 32.h),
+                SizedBox(height: 16.h),
+
+                // PDF Button
+              Container(
+  margin: EdgeInsets.symmetric(vertical: 20.h), // Add margin for spacing
+  padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 24.w), // Add padding for better button sizing
+  height: 120.h,  // Specify the height of the container
+  decoration: BoxDecoration(
+    color: kblue, // Background color
+    borderRadius: BorderRadius.circular(12.r), // Rounded corners
+   
+  ),
+  child: InkWell(
+    onTap: () {
+      // Navigate to the PDF view screen
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PDFViewerScreen(),
+        ),
+      );
+    },
+    child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [Icon(
+          FontAwesomeIcons.play, // Play icon from FontAwesome
+          color: Colors.white,
+          size: 30.sp,  // Icon size
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            
+            SizedBox(width: 12.w),  // Space between the icon and text
+            Text(
+              'View PDF',
+              style: GoogleFonts.poppins(
+                fontSize: 22.sp,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ],
+    ),
+  ),
+)
+,
+             //   SizedBox(height: 32.h),
 
                 // Social Media Tiles
-                Column(
-                  children: [
-                    _socialMediaTile(
-                      icon: FontAwesomeIcons.facebook,
-                      title: 'Facebook',
-                      color: const Color(0xFF3b5998),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const PDFViewerScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                    _socialMediaTile(
-                      icon: FontAwesomeIcons.instagram,
-                      title: 'Instagram',
-                      color: const Color(0xFFE4405F),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const PDFViewerScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                    _socialMediaTile(
-                      icon: FontAwesomeIcons.twitter,
-                      title: 'Twitter',
-                      color: const Color(0xFF1DA1F2),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const PDFViewerScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
                 SizedBox(height: 32.h),
 
-                // Dummy Video List
+                // Instagram-like model view for videos
                 Text(
                   'Our Videos',
                   style: GoogleFonts.poppins(

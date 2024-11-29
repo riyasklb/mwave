@@ -32,11 +32,11 @@ class _VideoSelectionScreenState extends State<VideoSelectionScreen> {
   }
 
   Future<void> _initializeControllers() async {
-    _controller1 = VideoPlayerController.asset('assets/images/viddeo1.mp4')
+    _controller1 = VideoPlayerController.asset('assets/images/IMG_4777.MP4')
       ..addListener(_checkVideo1Status);
-    _controller2 = VideoPlayerController.asset('assets/images/vedio2.mp4')
+    _controller2 = VideoPlayerController.asset('assets/images/IMG_4777.MP4')
       ..addListener(_checkVideo2Status);
-    _controller3 = VideoPlayerController.asset('assets/images/video3.MP4')
+    _controller3 = VideoPlayerController.asset('assets/images/IMG_4777.MP4')
       ..addListener(_checkVideo3Status);
 
     await Future.wait([
