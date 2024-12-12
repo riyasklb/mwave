@@ -78,6 +78,6 @@ class MyApp extends StatelessWidget {
                 ),
               ),
             ),
-            home: VideoSelectionScreen()));
+            home: VideoplashScreen()));
   }
 }

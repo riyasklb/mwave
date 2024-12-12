@@ -10,7 +10,7 @@ import 'package:mwave/view/menu_screen.dart';
 import 'package:mwave/view/referals.dart';
 import 'package:mwave/view/branding/social_media_branding_screen.dart';
 import 'package:mwave/view/share_referal_screen.dart';
-import 'package:mwave/view/wallet_screen.dart';
+import 'package:mwave/view/wallet/wallet_screen.dart';
 
 
 

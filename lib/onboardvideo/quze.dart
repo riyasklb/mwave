@@ -75,13 +75,13 @@ class _QuizScreenState extends State<QuizScreen> {
 
               if (!_isSubmitted)
                 _buildButton('Submit Quiz', _submitQuiz),
-              if (_isSubmitted && widget.videoNumber < 3)
+              if (_isSubmitted && widget.videoNumber < 2)
                 _buildButton('Next Video', () => Get.back()),
-              if (_isSubmitted && widget.videoNumber == 3)
+              if (_isSubmitted && widget.videoNumber == 2)
                 _buildButton(
                   'Go to Payment Screen',
                   () => Get.offAll(PaymentPage()),
-                ),
+                ), 
             ],
           ),
         ),
@@ -136,7 +136,13 @@ class _QuizScreenState extends State<QuizScreen> {
             Localization.getString('optionM', widget.language),
             Localization.getString('optionN', widget.language),
           ],
-        },
+        },{
+            'question': Localization.getString('question3', widget.language),
+          'options': [
+            Localization.getString('optionF', widget.language),
+            Localization.getString('optionG', widget.language),
+            Localization.getString('optionH', widget.language),
+          ],}
       ];
     } else {
       return [

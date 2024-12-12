@@ -14,7 +14,7 @@ import '../controllers/auth_controller.dart';
 class HomeScreen extends StatelessWidget {
    HomeScreen({Key? key}) : super(key: key);
 
-   final AuthController authController = Get.put(AuthController());
+
 
   @override
   Widget build(BuildContext context) {
@@ -98,12 +98,12 @@ class HomeScreen extends StatelessWidget {
                               // Navigate to Analytics screen
                             },
                           ),
-                          _buildDashboardCard(
-                            context,
-                            title: 'Log out',
-                            icon: Icons.logout,
-                            onTap: () => _showLogoutDialog(context),
-                          ),
+                          // _buildDashboardCard(
+                          //   context,
+                          //   title: 'Log out',
+                          //   icon: Icons.logout,
+                          //   onTap: () => _showLogoutDialog(context),
+                          // ),
                         ],
                       ),
                     ),
@@ -117,39 +117,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // Method to show logout confirmation dialog
-  Future<void> _showLogoutDialog(BuildContext context) async {
-     showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text("Logout"),
-        content: Text("Are you sure you want to log out?"),
-        actions: [
-          TextButton(
-            child: Text("Cancel"),
-            onPressed: () {
-           Get.back();
-            },
-          ),
-          TextButton(
-            child: Text(
-              "Logout",
-              style: TextStyle(
-                fontSize: 18.sp, // Use ScreenUtil for responsive sizing
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            onPressed: () {
-              authController.logoutUser(context);
-              // Return true on logout
-            },
-          ),
-        ],
-      ),
-    );
 
-
-  }
 
   // // Refactored Logout Logic
   Widget _buildDashboardCard(

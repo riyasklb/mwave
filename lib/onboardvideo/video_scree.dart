@@ -4,9 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mwave/constants/colors.dart';
 import 'package:mwave/onboardvideo/quze.dart';
-
 import 'package:video_player/video_player.dart';
-
 class VideoSelectionScreen extends StatefulWidget {
   @override
   _VideoSelectionScreenState createState() => _VideoSelectionScreenState();
@@ -15,11 +13,9 @@ class VideoSelectionScreen extends StatefulWidget {
 class _VideoSelectionScreenState extends State<VideoSelectionScreen> {
   late VideoPlayerController _controller1;
   late VideoPlayerController _controller2;
-  late VideoPlayerController _controller3;
 
   bool _isVideo1Watched = false;
   bool _isVideo2Watched = false;
-  bool _isVideo3Watched = false;
 
   int _currentVideoIndex = 1;
   String _selectedLanguage = 'en'; // Default language
@@ -34,15 +30,12 @@ class _VideoSelectionScreenState extends State<VideoSelectionScreen> {
   Future<void> _initializeControllers() async {
     _controller1 = VideoPlayerController.asset('assets/images/IMG_4777.MP4')
       ..addListener(_checkVideo1Status);
-    _controller2 = VideoPlayerController.asset('assets/images/IMG_4777.MP4')
+    _controller2 = VideoPlayerController.asset('assets/images/IMG_4778.MP4')
       ..addListener(_checkVideo2Status);
-    _controller3 = VideoPlayerController.asset('assets/images/IMG_4777.MP4')
-      ..addListener(_checkVideo3Status);
 
     await Future.wait([
       _controller1.initialize(),
       _controller2.initialize(),
-      _controller3.initialize(),
     ]);
 
     setState(() {
@@ -64,17 +57,10 @@ class _VideoSelectionScreenState extends State<VideoSelectionScreen> {
     }
   }
 
-  void _checkVideo3Status() {
-    if (_controller3.value.position == _controller3.value.duration) {
-      setState(() => _isVideo3Watched = true);
-    }
-  }
-
   @override
   void dispose() {
     _controller1.dispose();
     _controller2.dispose();
-    _controller3.dispose();
     super.dispose();
   }
 
@@ -118,13 +104,6 @@ class _VideoSelectionScreenState extends State<VideoSelectionScreen> {
     );
   }
 
-  void _onQuizSubmitted(int videoNumber) {
-    setState(() => _currentVideoIndex = videoNumber + 1);
-    Get.to(
-      QuizScreen(videoNumber: videoNumber, language: _selectedLanguage),
-    );
-  }
-
   Widget buildVideoPlayer(VideoPlayerController controller) {
     return controller.value.isInitialized
         ? AspectRatio(
@@ -139,7 +118,6 @@ class _VideoSelectionScreenState extends State<VideoSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     if (!_isInitialized) {
       return Scaffold(
         backgroundColor: kwhite,
@@ -180,9 +158,6 @@ class _VideoSelectionScreenState extends State<VideoSelectionScreen> {
               SizedBox(height: 20.h),
               if (_currentVideoIndex == 2)
                 _buildVideoCard(2, _controller2, _isVideo2Watched),
-              SizedBox(height: 20.h),
-              if (_currentVideoIndex == 3)
-                _buildVideoCard(3, _controller3, _isVideo3Watched),
             ],
           ),
         ),
@@ -217,13 +192,37 @@ class _VideoSelectionScreenState extends State<VideoSelectionScreen> {
                 });
               },
             ),
-            if (isWatched)
+            if (isWatched && videoNumber == 1)
               ElevatedButton(
-                onPressed: () => _onQuizSubmitted(videoNumber),
+                onPressed: () {
+                  setState(() => _currentVideoIndex = 2);
+                },
+                child: Text(
+                  _selectedLanguage == 'en' ? 'Next Video' : 'அடுத்த வீடியோ',
+                  style: GoogleFonts.poppins(fontSize: 16.sp),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: kblue,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 24.w,
+                    vertical: 12.h,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.r),
+                  ),
+                ),
+              ),
+            if (isWatched && videoNumber == 2)
+              ElevatedButton(
+                onPressed: () {
+                  Get.to(
+                    QuizScreen(videoNumber: videoNumber, language: _selectedLanguage),
+                  );
+                },
                 child: Text(
                   _selectedLanguage == 'en'
-                      ? 'Take Quiz for Video $videoNumber'
-                      : 'வீடியோ $videoNumber க்கான வினாடி வினா எடுக்கவும்',
+                      ? 'Take Quiz'
+                      : 'வினாடி வினா எடுக்கவும்',
                   style: GoogleFonts.poppins(fontSize: 16.sp),
                 ),
                 style: ElevatedButton.styleFrom(

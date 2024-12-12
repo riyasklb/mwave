@@ -5,6 +5,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mwave/constants/colors.dart';
 import 'package:mwave/view/branding/pdf_view_screen.dart';
 
+
+
 class SocialMediaBrandingScreen extends StatelessWidget {
   const SocialMediaBrandingScreen({Key? key}) : super(key: key);
 
@@ -17,6 +19,7 @@ class SocialMediaBrandingScreen extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        height: 690.h,
         margin: EdgeInsets.symmetric(vertical: 10.h),
         padding: EdgeInsets.all(12.r),
         decoration: BoxDecoration(
@@ -61,9 +64,9 @@ class SocialMediaBrandingScreen extends StatelessWidget {
             // Video Thumbnail
             ClipRRect(
               borderRadius: BorderRadius.circular(8.r),
-              child: Image.network(
+              child: Image.asset(
                 thumbnail,
-                height: 200.h, // Adjust height as needed
+                //height: 200.h, // Adjust height as needed
                 width: double.infinity,
                 fit: BoxFit.cover,
               ),
@@ -207,7 +210,7 @@ class SocialMediaBrandingScreen extends StatelessWidget {
              //   SizedBox(height: 32.h),
 
                 // Social Media Tiles
-                SizedBox(height: 32.h),
+                SizedBox(height: 10.h),
 
                 // Instagram-like model view for videos
                 Text(
@@ -224,7 +227,7 @@ class SocialMediaBrandingScreen extends StatelessWidget {
                     children: [
                       _videoTile(
                         thumbnail:
-                            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1uPDKhNqzPiGJko5UBlwm0rGj5OzX-0rCCQ&s', // Replace with video thumbnail URLs
+                            'assets/images/addimg1.jpg', // Replace with video thumbnail URLs
                         title: 'Video Title 1',
                         onTap: () {
                           // Placeholder for video playback
@@ -235,24 +238,15 @@ class SocialMediaBrandingScreen extends StatelessWidget {
                       ),
                       _videoTile(
                         thumbnail:
-                            'https://www.articlecube.com/sites/default/files/styles/article_full/adaptive-image/public/field/image/32132/The%20Ultimate%20Guide%20to%20Create%20an%20Engaging%20E-learning%20App%20with%20Machine%20Learning%20for%20Modern%20Learners.jpg?itok=Yqi34y_F', // Replace with video thumbnail URLs
-                        title: 'Video Title 2',
+                            'assets/images/addimg2.jpg',
+                                 title: 'Video Title 2',
                         onTap: () {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text('Play Video 2')),
                           );
                         },
                       ),
-                      _videoTile(
-                        thumbnail:
-                            'https://www.articlecube.com/sites/default/files/styles/article_full/adaptive-image/public/field/image/24287/Asset%20Management%20Software.jpg?itok=aCpMtjaN', // Replace with video thumbnail URLs
-                        title: 'Video Title 3',
-                        onTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Play Video 3')),
-                          );
-                        },
-                      ),
+                  
                     ],
                   ),
                 ),
