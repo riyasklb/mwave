@@ -11,7 +11,7 @@ import 'package:mwave/view/profile_screen.dart';
 import 'package:mwave/view/referal_screen.dart';
 import 'package:mwave/view/refund_and_policy.dart';
 import 'package:mwave/view/share_referal_screen.dart';
-import 'package:mwave/view/wallet/delete_account/manage_acount.dart';
+import 'package:mwave/view/delete_account/manage_acount.dart';
 
 class MenuScreen extends StatelessWidget {
   const MenuScreen({super.key});
