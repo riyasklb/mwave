@@ -26,7 +26,7 @@ class RefundPolicyScreen extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: AppBar(
+                child: AppBar(automaticallyImplyLeading: false,
                   backgroundColor: Colors.transparent, // Transparent AppBar
                   title: Text(
                     'Refund Policy',

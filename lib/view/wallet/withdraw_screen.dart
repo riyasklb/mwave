@@ -69,7 +69,6 @@ Future<void> _loadWalletAmount() async {
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _mobileController = TextEditingController();
 
-
 void _submitRequest() async {
   final amount = int.tryParse(_amountController.text) ?? 0;
   final mobileNumber = _mobileController.text.trim();
@@ -151,7 +150,7 @@ void _submitRequest() async {
     context: context,
     barrierDismissible: false,
     builder: (context) {
-      return Center(
+      return const Center(
         child: CircularProgressIndicator(),
       );
     },
@@ -174,6 +173,8 @@ void _submitRequest() async {
           .collection('withdraw_requests')
           .add(withdrawalRequest);
 
+      print("Withdrawal request added to 'withdraw_requests' collection.");
+
       // Store the withdrawal request under the user's document
       await FirebaseFirestore.instance
           .collection('users')
@@ -182,6 +183,8 @@ void _submitRequest() async {
           .doc(requestRef.id)
           .set(withdrawalRequest);
 
+      print("Withdrawal request added to 'withdrawal_history' sub-collection.");
+
       // Deduct the amount from the wallet
       await FirebaseFirestore.instance
           .collection('users')
@@ -189,6 +192,8 @@ void _submitRequest() async {
           .update({
         'wallet': walletAmount - amount,
       });
+
+      print("Wallet amount updated.");
 
       setState(() {
         walletAmount -= amount;

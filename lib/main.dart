@@ -18,7 +18,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  Get.lazyPut(()=>AuthController());
+   Get.put(AuthController());
     Get.lazyPut(()=>ReferralController());
   runApp(const MyApp());
 }
@@ -78,6 +78,6 @@ class MyApp extends StatelessWidget {
                 ),
               ),
             ),
-            home: VideoplashScreen()));
+            home: VideoSplashScreen()));
   }
 }

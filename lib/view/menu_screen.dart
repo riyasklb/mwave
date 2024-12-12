@@ -11,6 +11,7 @@ import 'package:mwave/view/profile_screen.dart';
 import 'package:mwave/view/referal_screen.dart';
 import 'package:mwave/view/refund_and_policy.dart';
 import 'package:mwave/view/share_referal_screen.dart';
+import 'package:mwave/view/wallet/delete_account/manage_acount.dart';
 
 class MenuScreen extends StatelessWidget {
   const MenuScreen({super.key});
@@ -94,6 +95,7 @@ class MenuScreen extends StatelessWidget {
                   icon: Icons.manage_accounts,
                   label: 'Manage Account',
                   onTap: () {
+                    Get.to(DeleteAccountScreen());
                     // Navigate to Manage Account screen
                   },
                 ),
@@ -106,14 +108,14 @@ class MenuScreen extends StatelessWidget {
                 //     // Add share functionality
                 //   },
                 // ),
-                buildCustomButton(
-                  icon: Icons.help,
-                  label: 'Help and Support',
-                  onTap: () {
-                    Get.to(ReferralScreen());
-                    // Navigate to Help and Support screen
-                  },
-                ),
+                // buildCustomButton(
+                //   icon: Icons.help,
+                //   label: 'Help and Support',
+                //   onTap: () {
+                //     Get.to(ReferralScreen());
+                //     // Navigate to Help and Support screen
+                //   },
+                // ),
                 buildCustomButton(
                   icon: Icons.logout,
                   label: 'Logout',
