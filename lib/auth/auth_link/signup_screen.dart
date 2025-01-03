@@ -1,8 +1,11 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mwave/auth/auth_link/auth_service.dart';
+import 'package:mwave/auth/auth_link/login_link.dart';
 import 'package:mwave/auth/auth_link/verifyhome.dart';
 import 'package:mwave/constants/colors.dart';
 
@@ -17,21 +20,24 @@ class _SignupScreenState extends State<SignupScreen> {
   final _auth = AuthService();
 
   final _email = TextEditingController();
+  final _password = TextEditingController();
   bool _isLoading = false; // Loader state
 
   @override
   void dispose() {
     _email.dispose();
+    _password.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(backgroundColor:Colors.transparent,
+    return Scaffold(
+      backgroundColor: Colors.transparent,
       body: Container(
-         width: double.infinity,
+        width: double.infinity,
         height: double.infinity,
-        decoration:  BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [kblue, Color.fromARGB(255, 247, 244, 247)],
             begin: Alignment.topLeft,
@@ -47,14 +53,14 @@ class _SignupScreenState extends State<SignupScreen> {
                 "Signup",
                 style: GoogleFonts.poppins(
                   fontSize: 40.sp,
-                  fontWeight: FontWeight.w600,color: kwhite
+                  fontWeight: FontWeight.w600,
+                  color: kwhite,
                 ),
               ),
               SizedBox(height: 50.h),
               TextField(
                 controller: _email,
                 decoration: InputDecoration(
-                 // labelText: "Email",
                   labelStyle: GoogleFonts.poppins(
                     fontSize: 16.sp,
                     color: Colors.grey[600],
@@ -77,6 +83,49 @@ class _SignupScreenState extends State<SignupScreen> {
                     horizontal: 15.w,
                   ),
                 ),
+              ),
+              SizedBox(height: 16.h),
+              TextField(
+                controller: _password,
+                obscureText: true,
+                decoration: InputDecoration(
+                  hintText: "Enter your password",
+                  hintStyle: GoogleFonts.poppins(fontSize: 14.sp),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                    borderSide: BorderSide(color: Colors.grey.shade400, width: 1.5),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                    borderSide: BorderSide(color: const Color.fromARGB(255, 255, 255, 255), width: 2.0),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: 12.h,
+                    horizontal: 15.w,
+                  ),
+                ),
+              ),
+              SizedBox(height: 16.h),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      Get.to(LoginLinkScreen());
+                    },
+                    child: Text(
+                      'Already have an account? Login',
+                      style: GoogleFonts.poppins(
+                        fontSize: 14.sp,
+                        color: Colors.blue,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                ],
               ),
               SizedBox(height: 20.h),
               _isLoading
@@ -118,29 +167,40 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 
-  Future<void> _signup() async {
-    setState(() {
-      _isLoading = true; // Show loader
-    });
-    try {
-      final user = await _auth.createUserWithEmailAndPassword(
-        _email.text,
-        '0000000',
-      );
+ Future<void> _signup() async {
+  setState(() {
+    _isLoading = true; // Show loader
+  });
+  try {
+    final user = await _auth.createUserWithEmailAndPassword(
+      _email.text,
+      _password.text,
+    );
 
-      if (user != null) {
-        log("User Created Successfully");
-        goToHome(context);
-      }
-    } catch (e) {
-      log("Signup Error: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error: $e")),
-      );
-    } finally {
-      setState(() {
-        _isLoading = false; // Hide loader
-      });
+    if (user != null) {
+      log("User Created Successfully");
+      goToHome(context);
+    }else{
+       ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("Signup Error: Somthing went wrong"),
+        backgroundColor: Colors.red,
+      ),
+    ); 
     }
+  } catch (e) {
+    log("Signup Error: $e");
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("Signup Error: ${e.toString()}"),
+        backgroundColor: Colors.red,
+      ),
+    );
+  } finally {
+    setState(() {
+      _isLoading = false; // Hide loader
+    });
   }
+}
+
 }

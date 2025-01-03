@@ -28,24 +28,24 @@ class _HomeMainScreenState extends State<HomeMainScreen> {
       'color': Colors.blue,
       'route': () => CoursesScreen(),
     },
-    {
-      'title': 'Profile',
-      'icon': Icons.person,
-      'color': Colors.purple,
-      'route': () => ProfileScreen(), // Replace with actual Profile screen
-    },
-    {
-      'title': 'Settings',
-      'icon': Icons.settings,
-      'color': Colors.orange,
-      'route': () {}, // Replace with actual Settings screen
-    },
-    {
-      'title': 'Notifications',
-      'icon': Icons.notifications,
-      'color': Colors.red,
-      'route': () {}, // Replace with actual Notifications screen
-    },
+    // {
+    //   'title': 'Courses',
+    //   'icon': Icons.collections,
+    //   'color': Colors.purple,
+    //   'route': () {}, // Replace with actual Profile screen
+    // },
+    // {
+    //   'title': 'Settings',
+    //   'icon': Icons.settings,
+    //   'color': Colors.orange,
+    //   'route': () {}, // Replace with actual Settings screen
+    // },
+    // {
+    //   'title': 'Notifications',
+    //   'icon': Icons.notifications,
+    //   'color': Colors.red,
+    //   'route': () {}, // Replace with actual Notifications screen
+    // },
   ];
 
   @override

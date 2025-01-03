@@ -3,9 +3,10 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mwave/constants/colors.dart';
 import 'package:mwave/controllers/auth_controller.dart';
-import 'package:mwave/onboardvideo/splash_initial.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mwave/view/delete_account/re_authentication.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DeleteAccountScreen extends StatelessWidget {
@@ -148,7 +149,9 @@ Future<void> _deleteAccount(BuildContext context) async {
       await referralDoc.reference.delete();
     }
 
-      final withdrawalSnapshot = await userDocRef.collection('withdrawal_history').get();
+    // Delete all documents in the 'withdrawal_history' subcollection
+    final withdrawalSnapshot =
+        await userDocRef.collection('withdrawal_history').get();
     for (final withdrawalDoc in withdrawalSnapshot.docs) {
       await withdrawalDoc.reference.delete();
     }
@@ -165,7 +168,7 @@ Future<void> _deleteAccount(BuildContext context) async {
     authController.logoutUser(context);
 
     // Delete the Firebase Authentication account
-  //  await user.delete();
+    await user.delete();
 
     // Show success message
     Get.snackbar(
@@ -176,19 +179,42 @@ Future<void> _deleteAccount(BuildContext context) async {
       snackPosition: SnackPosition.BOTTOM,
       duration: Duration(seconds: 3),
     );
-
+//navigateToReauthenticationScreen(context);
     // Navigate to splash screen
-    Get.offAll(VideoSplashScreen());
+   // Get.offAll(VideoSplashScreen());
   } catch (e) {
-    print(e);
-    Get.snackbar(
-      "Error",
-      "An error occurred while deleting your account. Please try again.",
-      backgroundColor: Colors.red,
-      colorText: Colors.white,
-      snackPosition: SnackPosition.BOTTOM,
-    );
+    navigateToReauthenticationScreen(context);
+    if (e is FirebaseAuthException && e.code == 'requires-recent-login') {
+      Get.snackbar(
+        "Reauthentication Required",
+        "Please log in again to confirm your identity and try deleting your account.",
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } else {
+      print(e);
+      Get.snackbar(
+        "Error",
+        "An error occurred while deleting your account. Please try again.",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
   }
+}
+void navigateToReauthenticationScreen(BuildContext context) {
+  Get.to(() => ReauthenticationScreen(
+        onReauthenticate: (email, password) async {
+          final credential = EmailAuthProvider.credential(
+            email: email,
+            password: password,
+          );
+          await FirebaseAuth.instance.currentUser
+              ?.reauthenticateWithCredential(credential);
+        },
+      ));
 }
 
 }

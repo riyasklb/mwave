@@ -42,68 +42,73 @@ class _AddressAndPhoneCollectionScreenState extends State<AddressAndPhoneCollect
 
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
-  Future<void> _submitData(BuildContext context) async {
-    final address = _addressController.text.trim();
-    final phone = _phoneController.text.trim();
-    final place = _placeController.text.trim();
+Future<void> _submitData(BuildContext context) async {
+  final address = _addressController.text.trim();
+  final phone = _phoneController.text.trim();
+  final place = _placeController.text.trim();
 
-    if (address.isEmpty || phone.isEmpty || place.isEmpty) {
+  if (address.isEmpty || phone.isEmpty || place.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Please fill in all fields')),
+    );
+    return;
+  }
+
+  if (phone.length != 10) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Phone number must be exactly 10 digits.')),
+    );
+    return;
+  }
+
+  try {
+    setState(() {
+      isLoading = true;
+    });
+
+    final User? user = _auth.currentUser;
+    if (user == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please fill in all fields')),
+        SnackBar(content: Text('User not authenticated. Please log in.')),
       );
+      Get.to(OnboardScreen());
       return;
     }
 
-    try {
-      setState(() {
-          isLoading=true; 
-      });
-   
-      final User? user = _auth.currentUser;
-      if (user == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('User not authenticated. Please log in.')),
-        );
-        Get.to(OnboardScreen());
-        return;
-      }
+    String uid = user.uid;
+    await _firestore.collection('users').doc(widget.email).set({
+      'uid': uid,
+      'email': widget.email,
+      'username': widget.username ?? 'Anonymous',
+      'photo': widget.photo ?? '',
+      'address': address,
+      'phone': phone,
+      'place': place,
+      'referralUsed': false,
+      'referralId': _generateReferralCode(widget.email),
+    });
 
-      String uid = user.uid;
-      await _firestore.collection('users').doc(widget.email).set({
-        'uid': uid,
-        'email': widget.email,
-        'username': widget.username ?? 'Anonymous',
-        'photo': widget.photo ?? '',
-        'address': address,
-        'phone': phone,
-        'place': place,
-        'referralUsed': false,
-        'referralId': _generateReferralCode(widget.email),
-      });
+    await _storeRegistrationStatus();
 
-      await _storeRegistrationStatus();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Details submitted successfully!')),
+    );
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Details submitted successfully!')),
-      );
-
-      _addressController.clear();
-      _phoneController.clear();
-      _placeController.clear();
-      Get.offAll(VideoSelectionScreen());
-      setState(() {
-        isLoading=false;
-      });
-      
-    } catch (e) {
-       setState(() {
-        isLoading=false;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to submit details: $e')),
-      );
-    }
+    _addressController.clear();
+    _phoneController.clear();
+    _placeController.clear();
+    Get.offAll(VideoSelectionScreen());
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Failed to submit details: $e')),
+    );
+  } finally {
+    setState(() {
+      isLoading = false;
+    });
   }
+}
+
 
   Future<void> _storeRegistrationStatus() async {
     final prefs = await SharedPreferences.getInstance();
@@ -174,26 +179,52 @@ class _AddressAndPhoneCollectionScreenState extends State<AddressAndPhoneCollect
                     ),
                     SizedBox(height: 16.h),
                     _buildTextField('Address', _addressController),
-                    _buildTextField(
-  'Phone Number',
-  _phoneController,
+TextField(
+  controller: _phoneController,
   keyboardType: TextInputType.phone,
   inputFormatters: [
     FilteringTextInputFormatter.digitsOnly, // Allows only numeric input
     LengthLimitingTextInputFormatter(10),  // Limits input to 10 characters
   ],
+  decoration: InputDecoration(
+    labelText: 'Phone Number',
+    filled: true,
+    fillColor: Colors.white.withOpacity(0.8),
+    contentPadding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 20.w),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(30.r), // Circular border
+      borderSide: BorderSide.none, // Removes the default border
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(30.r),
+      borderSide: BorderSide(color: Colors.grey.shade400, width: 1),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(30.r),
+      borderSide: BorderSide(color: kblue, width: 2),
+    ),
+  ),
+  style: TextStyle(fontSize: 16.sp),
+  onChanged: (value) {
+    if (value.length != 10) {
+      // Show an error message if the length is not 10
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Phone number must be exactly 10 digits.')),
+      );
+    }
+  },
 ),
 
               
                     _buildTextField('Place', _placeController),
                     SizedBox(height: 16.h),
-                    Text(
-                      'Your Referral Code: ${_generateReferralCode(widget.email)}',
-                      style: GoogleFonts.poppins(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    // Text(
+                    //   'Your Referral Code: ${_generateReferralCode(widget.email)}',
+                    //   style: GoogleFonts.poppins(
+                    //     fontSize: 16.sp,
+                    //     fontWeight: FontWeight.bold,
+                    //   ),
+                    // ),
                     SizedBox(height: 16.h),
                     ElevatedButton(
                       onPressed: () => _submitData(context),

@@ -8,7 +8,6 @@ import 'package:lottie/lottie.dart';
 import 'package:mwave/auth/onboard_screen.dart';
 import 'package:mwave/view/bottumbar1.dart';
 import 'package:mwave/view/paymet_screen.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mwave/constants/colors.dart';
 
@@ -17,78 +16,96 @@ class SplashScreen extends StatefulWidget {
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
   @override
   void initState() {
     super.initState();
-    // Initialize the animation
-    _controller = AnimationController(
-      vsync: this,
-      duration: Duration(seconds: 2), // Animation duration
-    );
-
-    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
-    _controller.forward();
-
-  _navigateBasedOnRegistrationStatus();
+    _initializeAnimation();
+    _navigateBasedOnRegistrationStatus();
   }
 
-  
-Future<void> _navigateBasedOnRegistrationStatus() async {
-  try {
-    final prefs = await SharedPreferences.getInstance();
-    bool isRegistered = prefs.getBool('isRegistered') ?? false;
+  /// Initialize animation
+  void _initializeAnimation() {
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    );
 
-    // Simulate splash screen delay (optional)
-    await Future.delayed(const Duration(seconds: 2));
-    
-    if (isRegistered) {
-      // If the user is registered, check the payment status from Firestore
+    _animation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    );
+
+    _controller.forward();
+  }
+
+  Future<void> _navigateBasedOnRegistrationStatus() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      bool isRegistered = prefs.getBool('isRegistered') ?? false;
+
+      // Simulate splash screen delay
+      await Future.delayed(const Duration(seconds: 2));
+
+      if (isRegistered==false) {
+        print(
+            '----------------------is registerd ${isRegistered}-------------------------------------------------------------');
+        print(
+            '----------------------is registerd ${isRegistered}-------------------------------------------------------------');
+        print(
+            '----------------------is registerd ${isRegistered}-------------------------------------------------------------');
+        print(
+            '----------------------is registerd ${isRegistered}-------------------------------------------------------------');
+        print(
+            '----------------------is registerd ${isRegistered}-------------------------------------------------------------');
+        // Navigate to Onboard Screen for new users
+        Get.off(() => OnboardScreen());
+        return; // Exit the method early to avoid further checks
+      }
+
+      // Check payment status if the user is registered
       bool paymentStatus = await _checkPaymentStatus();
-      
       if (paymentStatus) {
-        // Navigate to Home Screen if payment is done
+        // Navigate to Home Screen if payment is complete
         Get.off(() => BottumNavBar());
       } else {
         // Navigate to Payment Screen if payment is pending
         Get.off(() => PaymentPage());
       }
-    } else {
-      // Navigate to Onboard Screen if not registered
+    } catch (e) {
+      print('Error during splash screen navigation: $e');
+      // Fallback to Onboard Screen in case of any errors
       Get.off(() => OnboardScreen());
     }
-  } catch (e) {
-    print('Error during splash screen navigation: $e');
   }
-}
 
-// Helper function to check payment status from Firestore
-Future<bool> _checkPaymentStatus() async {
-  try {
-    var currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser != null) {
-      String? emailId = currentUser.email;
+  Future<bool> _checkPaymentStatus() async {
+    try {
+      var currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser != null) {
+        String? emailId = currentUser.email;
 
-      // Fetch the user's payment status from Firestore
-      DocumentSnapshot userDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(emailId)
-          .get();
+        // Fetch the user's payment status from Firestore
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(emailId)
+            .get();
 
-      if (userDoc.exists && userDoc.data() != null) {
-        // Return payment status if available, else false
-        return userDoc['paymentStatus'] ?? false;
+        if (userDoc.exists && userDoc.data() != null) {
+          return userDoc['paymentStatus'] ?? false;
+        }
       }
+    } catch (e) {
+      print('Error fetching payment status: $e');
     }
-  } catch (e) {
-    print('Error fetching payment status: $e');
-  }
-  return false; // Default to false if there's any error or missing data
-}
 
+    // Default to false if there's any error or no user document
+    return false;
+  }
 
   @override
   void dispose() {
@@ -99,17 +116,19 @@ Future<bool> _checkPaymentStatus() async {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kblue, // Background color
+      backgroundColor: kblue,
       body: Center(
         child: FadeTransition(
           opacity: _animation,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Lottie.asset('assets/images/Animation - 1729157358008.json'), // Lottie animation
+              Lottie.asset(
+                'assets/images/Animation - 1729157358008.json',
+                width: 150.w,
+                height: 150.h,
+              ),
               SizedBox(height: 20.h),
-
-              // App Name
               Text(
                 'MoneyWave',
                 style: GoogleFonts.poppins(
@@ -118,15 +137,6 @@ Future<bool> _checkPaymentStatus() async {
                   color: Colors.white,
                 ),
               ),
-
-              // Optional Tagline (commented out)
-              // Text(
-              //   'Manage your finances effortlessly',
-              //   style: GoogleFonts.poppins(
-              //     fontSize: 16.sp,
-              //     color: Colors.white70,
-              //   ),
-              // ),
             ],
           ),
         ),
